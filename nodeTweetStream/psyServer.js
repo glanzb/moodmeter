@@ -15,11 +15,18 @@ http.listen(3000, function(){
 	console.log('listening on localhost:3000');
 });
 
-var sadCount = 0;
-var joyCount = 0;
-var jealousCount = 0;
-var totalCount = 0;
+var wordList = ["happy", "sad", "good", "bad"]
 
+var wordData = {
+    "time": Date.now(),
+    "total": 0,
+    "words": {},
+    "tweet": ""
+};
+
+wordList.forEach(function(w){
+  wordData.words[w] = 0;
+})
 
 var tw = new Twitter({
   // consumer_key: "jmIG6E2dnbcGkPHr3FGWK6Lvd",
@@ -31,55 +38,28 @@ var tw = new Twitter({
   token:           config.twtToken,
   token_secret:    config.twtToken_secret
 })
-var tw2 = new Twitter({
-  consumer_key:    config.twtConsumer_key,
-  consumer_secret: config.twtConsumer_secret,
-  token:           config.twtToken,
-  token_secret:    config.twtToken_secret
-})
-var tw3 = new Twitter({
-  consumer_key:    config.twtConsumer_key,
-  consumer_secret: config.twtConsumer_secret,
-  token:           config.twtToken,
-  token_secret:    config.twtToken_secret
-})
 
-tw.track('sad');
-tw2.track('joy');
-tw3.track('mad');
+tw.track(wordList);
 
 tw.on('tweet', function(tweet){
-	sadCount++;
-  totalCount++;
-  var propSad = Math.round((sadCount/totalCount)*100);
+  var text = tweet.text.toLowerCase();
+  text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
 
-  io.emit('sadTweet', propSad);
-  console.log("sad:"+ sadCount +"\n");
-  //console.log(tweet.text);
-  console.log("--------------------------"+"\n")
-});
+  wordList.forEach(function(w){
+    if (text.indexOf(w) !== -1) {
+      wordData.words[w]++;
+      wordData.total++;
+      wordData.time = Date.now();
+      wordData.tweet = tweet.text;
+      io.emit('data', wordData);
+    }
+  })
 
-tw2.on('tweet', function(tweet){
-	joyCount++;
-  totalCount++;
-  var propJoy = Math.round((joyCount/totalCount)*100);
+  console.log(wordData);
   
-  io.emit('joyTweet', propJoy);
- 	console.log("joy:"+ joyCount+ "\n");
- 	//console.log(tweet.text);
-  console.log("--------------------------"+"\n")
+  
 });
 
-tw3.on('tweet', function(tweet){
-  jealousCount++;
-  totalCount++;
-  var propjealous = Math.round((jealousCount/totalCount)*100);
-  
-  io.emit('jealousTweet', propjealous);
-  console.log("mad:"+ jealousCount+ "\n");
-  //console.log(tweet.text);
-  console.log("--------------------------"+"\n")
-});
 
 // setInterval(freq(), 10000);
 

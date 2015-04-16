@@ -7,21 +7,13 @@ var socket = io();
       //   return false;
       // });
 
-socket.on('sadTweet', function(twitCount){
-  console.log("sad: " + twitCount)
-  $('#sad').text("sadCount: " + twitCount.toString());
+socket.on('data', function(wordData){
+  console.log(wordData);
+  $('#data').text("");
+  $('#data').text(JSON.stringify(wordData));
   //drawBar(twitCount);
 });
 
-socket.on('joyTweet', function(twitCount){
-  console.log("joy: " + twitCount)
-  $('#joy').text("joyCount: " + twitCount.toString());
-});
-
-socket.on('jealousTweet', function(twitCount){
-  console.log("mad: " + twitCount)
-  $('#jealous').text("madCount: " + twitCount.toString());
-});
 
 function drawBar(where, width){
 	var svg = d3.select("svg");
