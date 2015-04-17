@@ -5,15 +5,17 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
 
+http.listen(8000, function(){
+  console.log('listening on localhost:8000');
+});
+
 app.use('/', express.static(__dirname + '/'));
 
 app.get('/', function(req,res){
 	res.sendFile(__dirname + '/testIndex.html');
 });
 
-http.listen(3000, function(){
-	console.log('listening on localhost:3000');
-});
+
 
 var wordList = ["happy", "sad", "good", "bad"]
 

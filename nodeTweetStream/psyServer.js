@@ -4,11 +4,12 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
+var db = require('orchestrate')('850e2404-5a72-442d-80dd-49f4ccf36650')
 
 app.use('/', express.static(__dirname + '/'));
 
 app.get('/', function(req,res){
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/testIndex.html');
 });
 
 http.listen(3000, function(){
@@ -21,7 +22,8 @@ var wordData = {
     "time": Date.now(),
     "total": 0,
     "words": {},
-    "tweet": ""
+    "tweet": "",
+    "wordChanged":""
 };
 
 wordList.forEach(function(w){
@@ -29,10 +31,6 @@ wordList.forEach(function(w){
 })
 
 var tw = new Twitter({
-  // consumer_key: "jmIG6E2dnbcGkPHr3FGWK6Lvd",
-  // consumer_secret: "v2SwwluRI6WQiLercG1MLYqUNRS9dPhoymKIXfcYuE65oqQP5h",
-  // token: "3143092806-oXvalEaNqnR7Yuanhfv9ROfUGJf06E4dAeuNsCl",
-  // token_secret: "4Uc5wKaok73HTqZOSs6WCjeNosFWDBQhUUK7KMRfC7MWy"
   consumer_key:    config.twtConsumer_key,
   consumer_secret: config.twtConsumer_secret,
   token:           config.twtToken,
@@ -48,6 +46,7 @@ tw.on('tweet', function(tweet){
   wordList.forEach(function(w){
     if (text.indexOf(w) !== -1) {
       wordData.words[w]++;
+      wordData.wordChanged = w;
       wordData.total++;
       wordData.time = Date.now();
       wordData.tweet = tweet.text;
@@ -61,11 +60,15 @@ tw.on('tweet', function(tweet){
 });
 
 
-// setInterval(freq(), 10000);
+// setInterval(function(){
+//   //console.log(wordData["time"].toString());
+//   var current_wordData = wordData;
+//   console.log(current_wordData.time.toString());
+//   db.put('thing', current_wordData.time.toString(), current_wordData, false)
+//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+//   .fail(function(error){console.log('db post failed: '+error.body)});
+// }, 5000);
 
-// function freq(){
-
-// }
 
 
 
