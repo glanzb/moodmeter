@@ -4,7 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
-var db = require('orchestrate')('850e2404-5a72-442d-80dd-49f4ccf36650')
+var db = require('orchestrate')(config.db_key)
 
 app.use('/', express.static(__dirname + '/'));
 
@@ -20,7 +20,7 @@ http.listen(3000, function(){
 	console.log('listening on localhost:3000');
 });
 
-var wordList = ["glad", "sad", "good", "bad"]
+var wordList = ["happy", "sad", "good", "bad"]
 
 var wordData = {
     "time": Date.now(),
@@ -58,7 +58,7 @@ tw.on('tweet', function(tweet){
     }
   })
 
-  console.log(wordData);
+  //console.log(wordData);
   
   
 });

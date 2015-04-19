@@ -8,7 +8,7 @@ var socket = io();
       // });
 
 socket.on('data', function(wordData){
-  console.log(wordData);
+  //console.log(wordData);
   $('#data').text("");
   $('#data').text(JSON.stringify(wordData));
   //drawBar(twitCount);
