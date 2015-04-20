@@ -58,7 +58,7 @@ tw.on('tweet', function(tweet){
     }
   })
 
-  //console.log(wordData);
+  console.log(wordData);
   
   
 });
