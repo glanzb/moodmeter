@@ -32,7 +32,7 @@ var TriPictures = (function() {
 	var TriPictures = Backbone.Collection.extend({
 		model:TriPic,
 		initialize: function() {
-			document.body.appendChild(pattern.canvas(document.getElementById('picture')));
+			document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
 		},
 		refresh: function(){
 			//var model = this.pattern
@@ -62,10 +62,10 @@ var BlockView0 = Backbone.View.extend({
 
 var BlockView1 = Backbone.View.extend({
 	tagName: 'div',
+	template: '',
 	// events: {'click': 'click'},
 	initialize: function(opts){
-		this.n = opts.n;
-		//this.$el.appendTo(opts.$div); 
+		this.template = _.template($('#tweets').html());
 	},
 	render: function(){
 
@@ -84,23 +84,30 @@ var BlockView2 = Backbone.View.extend({
 		//this.$el.appendTo(opts.$div); 
 	},
 	render: function(){
-
-	},
+	}	
 	// click: function(evt) {
 	// 	this.collection.refresh(this.n);
 	// }
 });
 
+// var 
+
 var BlockView3 = Backbone.View.extend({
 	tagName: 'div',
-
+	model:TriPictures,
 	// events: {'click': 'click'},
 	initialize: function(opts){
 		this.n = opts.n;
 		//this.$el.appendTo(opts.$div); 
 	},
 	render: function(){
-
+		this.$el.html();
+		var self = this;
+		for (var i = 0; i<6; ++i){
+			var gallery = TriPictures[i];
+			this.$el.append(gallery.$el);
+			gallery.render();
+		}
 	},
 	// click: function(evt) {
 	// 	this.collection.refresh(this.n);
