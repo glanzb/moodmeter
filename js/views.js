@@ -10,8 +10,8 @@ var TriPictures = (function() {
       var i = 1; 
       
       var pattern = Trianglify({
-          width: window.innerWidth, //defaults to 600
-          height: window.innerHeight, //defaults to 400
+          width: 800,//window.innerWidth, //defaults to 600
+          height: 600,//window.innerHeight, //defaults to 400
           cell_size: 75, // default
           palette: Trianglify.colorbrewer,
           variance: 0.75, // value between 0 and 1 (inclusive), defaults to 0.75. Specify the amount of randomness used when generating triangles.
