@@ -11,6 +11,7 @@ socket.on('data', function(wordData){
   //console.log(wordData);
   $('#data').text("");
   $('#data').text(JSON.stringify(wordData));
+  return wordData;
   //drawBar(twitCount);
 });
 

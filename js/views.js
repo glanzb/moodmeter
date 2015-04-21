@@ -44,6 +44,29 @@ var TriPictures = (function() {
 })(); //end IIFE
 
 
+var Data = Backbone.Model.extend({});
+	var data = new Data({
+
+	initialize: $(function(){
+		var socket = io();
+		      // $('form').submit(function(){
+		      //   socket.emit('input', $('#m').val());
+		      //   $('#m').val('');
+		      //   return false;
+		      // });
+
+		socket.on('data', function(wordData){
+		  //console.log(wordData);
+		  $('#data').text("");
+		  $('#data').text(JSON.stringify(wordData));
+		  return wordData;
+		  //console.log(wordData.text);
+		  //drawBar(twitCount);
+		});
+	})
+});
+
+
 // --- Views ---
 var BlockView0 = Backbone.View.extend({
 	tagName: 'nav',
@@ -65,7 +88,7 @@ var BlockView1 = Backbone.View.extend({
 	template: '',
 	// events: {'click': 'click'},
 	initialize: function(opts){
-		this.template = _.template($('#tweets').html());
+		//this.template = _.template($('#tweets').html());
 	},
 	render: function(){
 
