@@ -133,7 +133,7 @@ var MainView = Backbone.View.extend({
 		};
 
 		makeSubView('nav',BlockView0);
-		makeSubView('tweets',BlockView1);
+		makeSubView('data',BlockView1);
 		makeSubView('picture',BlockView2);
 		makeSubView('galery',BlockView3);
 		
