@@ -10,6 +10,11 @@
 	<script type="text/javascript" src="lib/underscore.js"></script>
 	<script type="text/javascript" src="lib/backbone.js"></script>
 
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.4/p5.min.js"></script>
+  <script type="text/javascript" src="/testFiles/testIndex.js"></script>
+  <script type="text/javascript" src="/testFiles/p5sketch.js"></script>
+
 	<!-- trianglify -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/0.2.0/trianglify.min.js"></script>
 
@@ -28,6 +33,9 @@
         margin-right: 10%;
         margin-left: 10%;
         width: 80%;
+    };
+    body {
+      margin-top: 250px;
     }
 </style>
 </head>
@@ -57,6 +65,8 @@
       </div><!--/.nav-collapse -->
     </div>
   </nav>
+
+<h3 id="data">open the javascript console to see the data stream</h3>
 <div id='main'></div>
 <div id="my-app">
 	
