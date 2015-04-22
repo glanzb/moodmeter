@@ -92,10 +92,7 @@ function biggest(){
   return biggest;
 }
 
-var oldWordData;
-
-
-oldWordData = deep_.deepClone(wordData);
+var oldWordData = deep_.deepClone(wordData);
 //console.log(oldWordData);
  
 
