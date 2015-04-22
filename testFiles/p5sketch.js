@@ -15,7 +15,7 @@ function setup() {
 
 function draw() {
 	socket.on('data', function(wordData){
-		if(wordData.total%1 === 0){
+		if(wordData.total%5 === 0){
 			if(wordData.wordChanged == 'happy') stroke(255,255,0);
 			if(wordData.wordChanged == 'sad')  stroke(20,20,255);
 			if(wordData.wordChanged == 'good') stroke(255,255,255);
@@ -27,4 +27,3 @@ function draw() {
 	})
 }
 
-function one() {}
