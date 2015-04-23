@@ -45,7 +45,7 @@ var TriPictures = (function() {
 
 
 var Data = Backbone.Model.extend({});
-	var data = new Data({
+var data = new Data({
 
 	initialize: $(function(){
 		var socket = io();
@@ -68,22 +68,24 @@ var Data = Backbone.Model.extend({});
 
 
 // --- Views ---
-var BlockView0 = Backbone.View.extend({
-	tagName: 'nav',
-	// events: {'click': 'click'},
-	initialize: function(opts){
-		this.n = opts.n;
-		//this.$el.appendTo(opts.$div); 
-	},
-	render: function(){
+// var NavView = Backbone.View.extend({
+// 	tagName: 'div',
+// 	template: template.nav,
+// 	// events: {'click': 'click'},
+// 	initialize: function(opts){
+// 		this.n = opts.n;
+// 		this.$el.html(template.nav);
+// 		//this.$el.appendTo(opts.$div); 
+// 	},
+// 	render: function(){
 
-	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
-});
+// 	},
+// 	// click: function(evt) {
+// 	// 	this.collection.refresh(this.n);
+// 	// }
+// });
 
-var BlockView1 = Backbone.View.extend({
+var DataView = Backbone.View.extend({
 	tagName: 'div',
 	template: '',
 	// events: {'click': 'click'},
@@ -93,9 +95,7 @@ var BlockView1 = Backbone.View.extend({
 	render: function(){
 
 	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
+	
 });
 
 var BlockView2 = Backbone.View.extend({
@@ -115,22 +115,41 @@ var BlockView2 = Backbone.View.extend({
 
 // var 
 
-var BlockView3 = Backbone.View.extend({
-	tagName: 'div',
+var GalleryView = Backbone.View.extend({
+	tagName: 'section',
 	model:TriPictures,
+	template: template.gallery,
 	// events: {'click': 'click'},
 	initialize: function(opts){
 		this.n = opts.n;
+		this.$el.html(template.gallery);
 		//this.$el.appendTo(opts.$div); 
 	},
 	render: function(){
-		this.$el.html();
-		var self = this;
-		for (var i = 0; i<6; ++i){
-			var gallery = TriPictures[i];
-			this.$el.append(gallery.$el);
-			gallery.render();
-		}
+		 // or this.template
+		// var self = this;
+		// for (var i = 0; i<6; ++i){
+		// 	var gallery = TriPictures[i];
+		// 	this.$el.append(gallery.$el);
+		// 	gallery.render();
+		// }
+	},
+	// click: function(evt) {
+	// 	this.collection.refresh(this.n);
+	// }
+});
+
+var AboutView = Backbone.View.extend({
+	tagName: 'section',
+	template: template.about,
+	// events: {'click': 'click'},
+	initialize: function(opts){
+		this.n = opts.n;
+		this.$el.html(template.about);
+		//this.$el.appendTo(opts.$div); 
+	},
+	render: function(){
+
 	},
 	// click: function(evt) {
 	// 	this.collection.refresh(this.n);
@@ -138,8 +157,7 @@ var BlockView3 = Backbone.View.extend({
 });
 
 var MainView = Backbone.View.extend({
-	id: 'main',
-	tagName: 'div',
+	el: '#main',
 	initialize: function() {
 		//this.collection.on('change:pattern',this.render,this);
 		this.blocks = []; // subviews
@@ -147,7 +165,7 @@ var MainView = Backbone.View.extend({
 		var makeSubView = function(id,type){
 			var opts = {
 				collection: this.collection,
-				className: 'container',
+				//className: 'container',
 				id: id
 			}
 			var newView = new type(opts); // blockview type
@@ -155,10 +173,11 @@ var MainView = Backbone.View.extend({
 			newView.$el.appendTo(self.$el)
 		};
 
-		makeSubView('nav',BlockView0);
-		makeSubView('data',BlockView1);
+		// makeSubView('nav',NavView);
+		makeSubView('data',DataView);
 		makeSubView('picture',BlockView2);
-		makeSubView('galery',BlockView3);
+		makeSubView('gallery',GalleryView);
+		makeSubView('about', AboutView);
 		
 		this.$el.appendTo('body');	
 	},
