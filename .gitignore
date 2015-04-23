@@ -1,3 +1,6 @@
+.gitignore~HEAD
+.gitignore~MASTER
 config.js
-
 node_modules/
+.DS_Store
+testFiles/.DS_Store

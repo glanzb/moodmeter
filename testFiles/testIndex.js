@@ -9,6 +9,7 @@ $(function(){
       //   return false;
       // });
 
+
 	var colorFunc = function(x, y) {
     		return 'hsl('+Math.floor(Math.abs(x*y)*360)+',70%,60%)';
 	};
@@ -21,6 +22,15 @@ $(function(){
 	// });
 
 	// $("body").append(pattern.svg());
+
+socket.on('data', function(wordData){
+  //console.log(wordData);
+  $('#data').text("");
+  $('#data').text(JSON.stringify(wordData));
+  return wordData;
+  //drawBar(twitCount);
+});
+
 
 	socket.on('data', function(wordData){
 
