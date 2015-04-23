@@ -68,22 +68,22 @@ var data = new Data({
 
 
 // --- Views ---
-var NavView = Backbone.View.extend({
-	tagName: 'div',
-	template: template.nav,
-	// events: {'click': 'click'},
-	initialize: function(opts){
-		this.n = opts.n;
-		this.$el.html(template.nav);
-		//this.$el.appendTo(opts.$div); 
-	},
-	render: function(){
+// var NavView = Backbone.View.extend({
+// 	tagName: 'div',
+// 	template: template.nav,
+// 	// events: {'click': 'click'},
+// 	initialize: function(opts){
+// 		this.n = opts.n;
+// 		this.$el.html(template.nav);
+// 		//this.$el.appendTo(opts.$div); 
+// 	},
+// 	render: function(){
 
-	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
-});
+// 	},
+// 	// click: function(evt) {
+// 	// 	this.collection.refresh(this.n);
+// 	// }
+// });
 
 var DataView = Backbone.View.extend({
 	tagName: 'div',
@@ -139,6 +139,23 @@ var GalleryView = Backbone.View.extend({
 	// }
 });
 
+var AboutView = Backbone.View.extend({
+	tagName: 'section',
+	template: template.about,
+	// events: {'click': 'click'},
+	initialize: function(opts){
+		this.n = opts.n;
+		this.$el.html(template.about);
+		//this.$el.appendTo(opts.$div); 
+	},
+	render: function(){
+
+	},
+	// click: function(evt) {
+	// 	this.collection.refresh(this.n);
+	// }
+});
+
 var MainView = Backbone.View.extend({
 	el: '#main',
 	initialize: function() {
@@ -156,10 +173,11 @@ var MainView = Backbone.View.extend({
 			newView.$el.appendTo(self.$el)
 		};
 
-		makeSubView('nav',NavView);
+		// makeSubView('nav',NavView);
 		makeSubView('data',DataView);
 		makeSubView('picture',BlockView2);
 		makeSubView('gallery',GalleryView);
+		makeSubView('about', AboutView);
 		
 		this.$el.appendTo('body');	
 	},
