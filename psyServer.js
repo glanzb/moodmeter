@@ -94,6 +94,7 @@ function biggest(){
 
 var oldWordData = deep_.deepClone(wordData);
 //console.log(oldWordData);
+
  
 //calculate and store frequency of tweets for each word
 setInterval(function(){
@@ -108,18 +109,19 @@ setInterval(function(){
   // rateZero = ((wordData.words['happy'] - oldWordData.words['happy'])/interval)*1000;
   oldWordData = deep_.deepClone(wordData);
   console.log(wordData.wordsFreq);
-}, 1000);
+  io.emit('timedData', wordData )
+}, 2000);
 
 
 //send a wordData object to db every x ms
-setInterval(function(){
-  //console.log(wordData["time"].toString());
-  var current_wordData = wordData;
-  console.log(current_wordData.time.toString());
-  db.put('thing', current_wordData.time.toString(), current_wordData, false)
-  .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
-  .fail(function(error){console.log('db post failed: '+error.body)});
-}, 5000);
+// setInterval(function(){
+//   //console.log(wordData["time"].toString());
+//   var current_wordData = wordData;
+//   console.log(current_wordData.time.toString());
+//   db.put('thing', current_wordData.time.toString(), current_wordData, false)
+//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+//   .fail(function(error){console.log('db post failed: '+error.body)});
+// }, 5000);
 
 
 
