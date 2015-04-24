@@ -22,22 +22,28 @@ var TriPictures = (function() {
           stroke_width: 5.51,
           seed: null //defaults to null. Seeds the random number generator to create repeatable patterns
       });
-    
+
+      var pngURI = pattern.png();
+      	console.log(pngURI);
+      var svg = pattern.svg();
+      	console.log(pngURI);
+
      function makePic(pattern){
      	return {
      		pattern:pattern
      	}
      };
 
-	var TriPictures = Backbone.Collection.extend({
-		model:TriPic,
-		initialize: function() {
-			document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
-		},
-		refresh: function(){
-			//var model = this.pattern
-			//model.set()
-		}
+	// var TriPictures = Backbone.Collection.extend({
+	// 	model:TriPic,
+	// 	initialize: function() {
+	// 		this.pattern=pattern // pattern accesible
+	// 	// 	document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
+	// 	// },
+	// 	// refresh: function(){
+	// 		//var model = this.pattern
+	// 		//model.set()
+	// 	}
 	});
 
 	return TriPictures;
@@ -98,13 +104,16 @@ var DataView = Backbone.View.extend({
 	
 });
 
-var BlockView2 = Backbone.View.extend({
+var CanvasView = Backbone.View.extend({
 	tagName: 'canvas',
 
 	// events: {'click': 'click'},
 	initialize: function(opts){
-		this.n = opts.n;
-		//this.$el.appendTo(opts.$div); 
+		console.log(trianglify.pattern);
+		console.log(this.el);
+		//this.n = opts.n;		
+		//document.getElementById('main').appendChild(trianglify.pattern.canvas(this.el));
+		trianglify.pattern.canvas(this.el);
 	},
 	render: function(){
 	}	
@@ -164,7 +173,7 @@ var MainView = Backbone.View.extend({
 		var self = this;		
 		var makeSubView = function(id,type){
 			var opts = {
-				collection: this.collection,
+				collection: self.collection,
 				//className: 'container',
 				id: id
 			}
@@ -175,7 +184,7 @@ var MainView = Backbone.View.extend({
 
 		// makeSubView('nav',NavView);
 		makeSubView('data',DataView);
-		makeSubView('picture',BlockView2);
+		makeSubView('picture',CanvasView);
 		makeSubView('gallery',GalleryView);
 		makeSubView('about', AboutView);
 		
@@ -193,6 +202,7 @@ var page = null, trianglify = null;
 function makePage() {
 	trianglify = new TriPictures();
 	page = new MainView({collection:trianglify});
+	
 	page.render();
 }
 $(makePage);
