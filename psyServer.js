@@ -64,14 +64,14 @@ tw.on('tweet', function(tweet){
 });
 
 
-// setInterval(function(){
-//   //console.log(wordData["time"].toString());
-//   var current_wordData = wordData;
-//   console.log(current_wordData.time.toString());
-//   db.put('thing', current_wordData.time.toString(), current_wordData, false)
-//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
-//   .fail(function(error){console.log('db post failed: '+error.body)});
-// }, 5000);
+setInterval(function(){
+  //console.log(wordData["time"].toString());
+  var current_wordData = wordData;
+  console.log(current_wordData.time.toString());
+  db.put('picture', current_wordData.time.toString(), current_wordData, false)
+  .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+  .fail(function(error){console.log('db post failed: '+error.body)});
+}, 5000000);
 
 
 
