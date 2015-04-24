@@ -3,38 +3,49 @@ var TriPictures = (function() {
 	var TriPic = Backbone.Model.extend({
 	});
 
+
+
+
 	  var arr = [];
-        for (elem in Trianglify.colorbrewer) {
-          arr.push(Trianglify.colorbrewer[elem]);
-        }
-      var i = 1; 
+	    for (elem in Trianglify.colorbrewer) {
+	      arr.push(Trianglify.colorbrewer[elem]);
+	    }
+	  var i = 1; 
       
-      var pattern = Trianglify({
-          width: 800,//window.innerWidth, //defaults to 600
-          height: 600,//window.innerHeight, //defaults to 400
-          cell_size: 75, // default
-          palette: Trianglify.colorbrewer,
-          variance: 0.75, // value between 0 and 1 (inclusive), defaults to 0.75. Specify the amount of randomness used when generating triangles.
-          x_colors: arr[i], //'random',
-          //y_colors: 'match_x',
-          color_space: 'lab',
-          color_function: false,//colorFunc, 
-          stroke_width: 5.51,
-          seed: null //defaults to null. Seeds the random number generator to create repeatable patterns
-      });
-    
-     function makePic(pattern){
+    var pattern = Trianglify({
+        width: 800,//window.innerWidth, //defaults to 600
+        height: 600,//window.innerHeight, //defaults to 400
+        cell_size: 75, // default
+        palette: Trianglify.colorbrewer,
+        variance: 0.75, // value between 0 and 1 (inclusive), defaults to 0.75. Specify the amount of randomness used when generating triangles.
+        x_colors: arr[i], //'random',
+        //y_colors: 'match_x',
+        color_space: 'lab',
+        color_function: false,//colorFunc, 
+        stroke_width: 5.51,
+        seed: null //defaults to null. Seeds the random number generator to create repeatable patterns
+    });
+
+    var pngURI = pattern.png();
+    var data = pngURI.substr(pngURI.indexOf('base64') + 7); // this data is not that data
+    	console.log(data);
+    	console.log(pngURI);
+    var svg = pattern.svg();
+    	console.log(pngURI);
+
+    function makePic(pattern){
      	return {
      		pattern:pattern
      	}
-     };
+    };
 
 	var TriPictures = Backbone.Collection.extend({
 		model:TriPic,
 		initialize: function() {
-			document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
-		},
-		refresh: function(){
+			this.pattern=pattern // pattern accesible
+		// 	document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
+		// },
+		// refresh: function(){
 			//var model = this.pattern
 			//model.set()
 		}
@@ -98,13 +109,16 @@ var DataView = Backbone.View.extend({
 	
 });
 
-var BlockView2 = Backbone.View.extend({
+var CanvasView = Backbone.View.extend({
 	tagName: 'canvas',
 
 	// events: {'click': 'click'},
 	initialize: function(opts){
-		this.n = opts.n;
-		//this.$el.appendTo(opts.$div); 
+		console.log(trianglify.pattern);
+		console.log(this.el);
+		//this.n = opts.n;		
+		//document.getElementById('main').appendChild(trianglify.pattern.canvas(this.el));
+		trianglify.pattern.canvas(this.el);
 	},
 	render: function(){
 	}	
@@ -164,7 +178,7 @@ var MainView = Backbone.View.extend({
 		var self = this;		
 		var makeSubView = function(id,type){
 			var opts = {
-				collection: this.collection,
+				collection: self.collection,
 				//className: 'container',
 				id: id
 			}
@@ -175,7 +189,7 @@ var MainView = Backbone.View.extend({
 
 		// makeSubView('nav',NavView);
 		makeSubView('data',DataView);
-		makeSubView('picture',BlockView2);
+		makeSubView('picture',CanvasView);
 		makeSubView('gallery',GalleryView);
 		makeSubView('about', AboutView);
 		
@@ -193,6 +207,7 @@ var page = null, trianglify = null;
 function makePage() {
 	trianglify = new TriPictures();
 	page = new MainView({collection:trianglify});
+	
 	page.render();
 }
 $(makePage);
