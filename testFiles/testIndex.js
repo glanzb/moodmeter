@@ -27,13 +27,13 @@ $(function(){
 			pattern = Trianglify({
 				height: 600,
 				width: 1000,
-				variance: .5 + ((Math.random()-0.5)/5),
+				variance: .5 + ((Math.random()-0.5)/10),
 				cell_size: 100,
 				seed: 'gn26p',
 				color_function: function(x, y) {
 					//console.log(y)
 					//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-					return 'hsl(' + Math.floor((x*20)+(xShift*200)) + ',' + Math.floor((y)*(yShift*100)) + '%,'+ (40+(y*60)) + '%)'
+					return 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
 				}
 			});
 			console.log(xShift);
@@ -47,7 +47,7 @@ $(function(){
 
 	function lerp(a,b,t){
 		//console.log(t)
-		var interp = a + ((t * .1) * (b - a));
+		var interp = a + ((t * .15) * (b - a));
 		return interp
 	};
 
