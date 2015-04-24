@@ -14,38 +14,21 @@ $(function(){
     		return 'hsl('+Math.floor(Math.abs(x*y)*360)+',70%,60%)';
 	};
 	
-	// pattern = Trianglify({
-	// 	height: 300,
-	// 	width: 300,
-	// 	cell_size: 40,
-	// 	color_function: colorFunc
-	// });
-
-	// $("body").append(pattern.svg());
-
-socket.on('data', function(wordData){
-  //console.log(wordData);
-  $('#data').text("");
-  $('#data').text(JSON.stringify(wordData));
-  return wordData;
-  //drawBar(twitCount);
-});
-
 
 	socket.on('data', function(wordData){
 
-		if(wordData.total % 10 === 0){
+		if(wordData.total % 5 === 0){
 			//console.log(wordData);
-			//$('#data').text("");
-			//$('#data').text(JSON.stringify(wordData));
+			$('#data').text("");
+			$('#data').text(JSON.stringify(wordData));
 			var hFreq = wordData.wordsFreq['happy'];
 			pattern = Trianglify({
-				height: 300,
-				width: 300,
-				cell_size: 10,
+				height: 600,
+				width: 600,
+				cell_size: 50,
 				seed: 'gn26p',
 				color_function: function(x, y) {
-								return 'hsl(' + Math.floor(Math.abs(x*y)*(hFreq*100)) + ',70%,60%)';
+								return 'hsl(' + Math.floor((x)*(hFreq*10)) + ',70%,60%)';
 								}
 			});
 

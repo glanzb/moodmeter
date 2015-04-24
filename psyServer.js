@@ -38,7 +38,7 @@ var wordData = {
     "wordsFreq":   {},
     "tweet":       "",
     "wordChanged": "",
-    "biggest":0
+    "biggest":0,
 };
 
 //put wordList in the data object
@@ -95,7 +95,7 @@ function biggest(){
 var oldWordData = deep_.deepClone(wordData);
 //console.log(oldWordData);
  
-
+//calculate and store frequency of tweets for each word
 setInterval(function(){
   //console.log('2')
   //console.log(wordData)
@@ -103,7 +103,7 @@ setInterval(function(){
   var interval = wordData.time - oldWordData.time;
   //console.log(interval);
   for (prop in wordData.words){
-    wordData.wordsFreq[prop] = wordData.words[prop] - oldWordData.words[prop];
+    wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
   }
   // rateZero = ((wordData.words['happy'] - oldWordData.words['happy'])/interval)*1000;
   oldWordData = deep_.deepClone(wordData);
@@ -111,15 +111,15 @@ setInterval(function(){
 }, 1000);
 
 
-// send a wordData object to db every x ms
-// setInterval(function(){
-//   //console.log(wordData["time"].toString());
-//   var current_wordData = wordData;
-//   console.log(current_wordData.time.toString());
-//   db.put('thing', current_wordData.time.toString(), current_wordData, false)
-//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
-//   .fail(function(error){console.log('db post failed: '+error.body)});
-// }, 5000);
+//send a wordData object to db every x ms
+setInterval(function(){
+  //console.log(wordData["time"].toString());
+  var current_wordData = wordData;
+  console.log(current_wordData.time.toString());
+  db.put('thing', current_wordData.time.toString(), current_wordData, false)
+  .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+  .fail(function(error){console.log('db post failed: '+error.body)});
+}, 5000);
 
 
 
