@@ -36,6 +36,7 @@ var wordData = {
     "total":       0,
     "words":       {},
     "wordsFreq":   {},
+    "wordsFreqProportions": {},
     "tweet":       "",
     "wordChanged": "",
     "biggest":0,
@@ -98,17 +99,14 @@ var oldWordData = deep_.deepClone(wordData);
  
 //calculate and store frequency of tweets for each word
 setInterval(function(){
-  //console.log('2')
-  //console.log(wordData)
-  //console.log(oldWordData);
   var interval = wordData.time - oldWordData.time;
-  //console.log(interval);
   for (prop in wordData.words){
     wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
   }
-  // rateZero = ((wordData.words['happy'] - oldWordData.words['happy'])/interval)*1000;
+  wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
+  wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
   oldWordData = deep_.deepClone(wordData);
-  console.log(wordData.wordsFreq);
+  console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 }, 2000);
 

@@ -9,13 +9,20 @@ $(function(){
   	});
 
 	var hFreq = [1, 1];
+	var gFreq = [1, 1];
+
 	socket.on('timedData', function(wordData){
 		//console.log(hFreq);
 		hFreq.pop();
-		hFreq.unshift(wordData.wordsFreq['happy']);
+		hFreq.unshift(wordData.wordsFreqProportions['happy_sad']);
+		gFreq.pop();
+		gFreq.unshift(wordData.wordsFreqProportions['good_bad']);
+
 		var i = 0;
+
 		interval(function(){
 			var xShift = lerp(hFreq[1], hFreq[0], i);
+			var yShift = lerp(gFreq[1], gFreq[0], i);
 			i++;
 			pattern = Trianglify({
 				height: 600,
@@ -26,10 +33,10 @@ $(function(){
 				color_function: function(x, y) {
 					//console.log(y)
 					//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-					return 'hsl(' + Math.floor((x*20)+(xShift*10)) + ',' + Math.floor((1-y)*40) + '%,'+ (6+(y*50)) + '%)'
+					return 'hsl(' + Math.floor((x*20)+(xShift*200)) + ',' + Math.floor((y)*(yShift*100)) + '%,'+ (40+(y*60)) + '%)'
 				}
 			});
-			
+			console.log(xShift);
 			$("canvas").remove();
 			$("body").append(pattern.canvas());
 			
