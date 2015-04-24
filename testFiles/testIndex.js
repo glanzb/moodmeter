@@ -1,38 +1,35 @@
-var pattern = null;
-
 $(function(){
 
 	var socket = io();
 	var wordData;
 	
 	socket.on('data', function(wordData){
-		if(wordData.total % 10 === 0){
-			$('#data').text("");
-			$('#data').text(JSON.stringify(wordData));			
-		}
+		$('#data').text("");
+		$('#data').text(JSON.stringify(wordData.tweet));			
   	});
 
 	var hFreq = [1, 1];
 	socket.on('timedData', function(wordData){
-		console.log(hFreq);
+		//console.log(hFreq);
 		hFreq.pop();
 		hFreq.unshift(wordData.wordsFreq['happy']);
 		var i = 0;
 		interval(function(){
 			var xShift = lerp(hFreq[1], hFreq[0], i);
 			i++;
-			//console.log(xShift);
-			//console.log('xShift: '+ xShift + ' old_hFreq: '+hFreq[1]+' hFreq: '+ hFreq[0]);
 			pattern = Trianglify({
 				height: 600,
 				width: 1000,
-				cell_size: 90,
+				variance: .5 + ((Math.random()-0.5)/5),
+				cell_size: 100,
 				seed: 'gn26p',
 				color_function: function(x, y) {
-					return 'hsl(' + Math.floor((x*150)+(xShift*2)) + ',20%,60%)'
+					//console.log(y)
+					//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
+					return 'hsl(' + Math.floor((x*20)+(xShift*10)) + ',' + Math.floor((1-y)*40) + '%,'+ (6+(y*50)) + '%)'
 				}
 			});
-		
+			
 			$("canvas").remove();
 			$("body").append(pattern.canvas());
 			
