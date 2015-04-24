@@ -111,7 +111,8 @@ setInterval(function(){
 }, 2000);
 
 
-send a wordData object to db every x ms
+
+//send a wordData object to db every x ms
 setInterval(function(){
   //console.log(wordData["time"].toString());
   var current_wordData = wordData;
@@ -120,6 +121,7 @@ setInterval(function(){
   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
   .fail(function(error){console.log('db post failed: '+error.body)});
 }, 500000);
+
 
 
 
