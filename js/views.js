@@ -198,6 +198,7 @@ var CanvasView = Backbone.View.extend({
 		this.triangles();
 		this.render();
 		this.$el.appendTo('#picture');
+		//this.$el.addClass('#picture .setup');
 
 		//this.n = opts.n;		
 		//document.getElementById('main').appendChild(trianglify.pattern.canvas(this.el));
