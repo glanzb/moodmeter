@@ -1,13 +1,20 @@
-$(function(){
 
 	var socket = io();
 	var wordData;
+
+
+$(function(){
+
+
 	
 	socket.on('data', function(wordData){
 		$('#data').text("");
 		$('#data').text(JSON.stringify(wordData.tweet));			
   	});
+});
 
+
+$(function(){
 	var hFreq = [1, 1];
 	var gFreq = [1, 1];
 
