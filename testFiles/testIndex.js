@@ -36,7 +36,7 @@ $(function(){
 					return 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
 				}
 			});
-			console.log(xShift);
+			//console.log(xShift);
 			$("canvas").remove();
 			$("body").append(pattern.canvas());
 			

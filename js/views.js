@@ -69,7 +69,7 @@ var data = new Data({
 		socket.on('data', function(wordData){
 		  //console.log(wordData);
 		  $('#data').text("");
-		  $('#data').text(JSON.stringify(wordData));
+		  $('#data').text(JSON.stringify(wordData.tweet));
 		  return wordData;
 		  //console.log(wordData.text);
 		  //drawBar(twitCount);
@@ -112,7 +112,7 @@ var CanvasView = Backbone.View.extend({
 			var i = 0;
 
 			interval(function(){
-				var xShift = lerp(hFreq[1], hFreq[0], i);
+				var xShift = lerp(1-hFreq[1], 1-hFreq[0], i);
 				var yShift = lerp(gFreq[1], gFreq[0], i);
 				i++;
 				pattern = Trianglify({
@@ -124,7 +124,7 @@ var CanvasView = Backbone.View.extend({
 					color_function: function(x, y) {
 						//console.log(y)
 						//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-						return 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+						return 'hsl(' + Math.floor((x*80)+(xShift*400)) + ',' + Math.floor((y*10)+(yShift*80)) + '%,'+ (30+(y*60)) + '%)'
 					}
 				});
 				//console.log(xShift);
@@ -138,7 +138,7 @@ var CanvasView = Backbone.View.extend({
 
 		function lerp(a,b,t){
 			//console.log(t)
-			var interp = a + ((t * .15) * (b - a));
+			var interp = a + ((t * .05) * (b - a));
 			return interp
 		};
 
