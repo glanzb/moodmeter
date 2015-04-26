@@ -110,17 +110,65 @@ setInterval(function(){
   io.emit('timedData', wordData )
 }, 2000);
 
-
+dbCollectionName = 'thing'
 
 //send a wordData object to db every x ms
 setInterval(function(){
   //console.log(wordData["time"].toString());
   var current_wordData = wordData;
   console.log(current_wordData.time.toString());
-  db.put('twitterdata', current_wordData.time.toString(), current_wordData, false)
+  db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
   .fail(function(error){console.log('db post failed: '+error.body)});
 }, 500000);
+
+
+
+function msToDate(ms){
+  var date = new Date(1429836376150).toLocaleString();
+  return date  
+}
+
+function dateToMs(dateString){ //dateToMs("March 21, 2012") --> 1332313200000
+  var ms = Date.parse(dateString)
+  return ms
+}
+
+//make a db query every day for yesterday's posts
+
+app.get('/test/api', function(req,res){
+
+  function getValue(obj) {
+    var val = obj.value;
+    val.id = val.key;
+    return val;
+}
+
+  // Handle success:
+  function forwardOrchResults(result) {
+      //given result obj from Orchestrate db, strip away metadata
+      // and forward the actual model data to client:
+      var values = result.body.results.map(getValue);
+      var json = JSON.stringify(values);
+      console.log("Returning array: "+json);
+      res.end(json); //return JSON array to client
+  }
+
+  // Handle failure:
+  function handleFailure(err) {
+      console.log("Error: "+err);
+      res.end(err);
+  }
+  db.newSearchBuilder()
+    .collection(dbCollectionName)
+    .limit(100)
+    .sort('key','asc')
+    .query(searchStr)  key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
+    .then(forwardOrchResults) // makeChart
+    .fail(handleFailure)
+}
+
+});
 
 
 
