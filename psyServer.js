@@ -75,8 +75,10 @@ tw.on('tweet', function(tweet){
       wordData.time = Date.now();
       wordData.tweet = tweet.text;
       wordData.biggest = biggest();
-
-      io.emit('data', wordData);
+      if (wordData.total%100 === 0){
+        io.emit('data', wordData);
+      }
+      
     }
   })
 
@@ -120,7 +122,7 @@ setInterval(function(){
   db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
   .fail(function(error){console.log('db post failed: '+error.body)});
-}, 500000);
+}, 5000005);
 
 
 
@@ -163,10 +165,10 @@ app.get('/test/api', function(req,res){
     .collection(dbCollectionName)
     .limit(100)
     .sort('key','asc')
-    .query(searchStr)  key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
+    .query(searchStr)  //key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
     .then(forwardOrchResults) // makeChart
     .fail(handleFailure)
-}
+
 
 });
 

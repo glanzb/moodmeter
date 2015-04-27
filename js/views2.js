@@ -230,30 +230,60 @@ var CanvasView = Backbone.View.extend({
 			// }
 });
 
-// var 
+// 
+
+// var GalleryView = Backbone.View.extend({
+// 	tagName: 'section',
+// 	//model:TriPictures,
+// 	template: template.gallery,
+// 	// events: {'click': 'click'},
+// 	initialize: function(opts){
+// 		this.n = opts.n;
+// 		this.$el.html(template.gallery);
+// 		//this.$el.appendTo(opts.$div); 
+// 	},
+// 	render: function(){
+// 		 // or this.template
+// 		// var self = this;
+// 		// for (var i = 0; i<6; ++i){
+// 		// 	var gallery = TriPictures[i];
+// 		// 	this.$el.append(gallery.$el);
+// 		// 	gallery.render();
+// 		// }
+// 	},
+// 	// click: function(evt) {
+// 	// 	this.collection.refresh(this.n);
+// 	// }
+// });
+
+var GalleryModel = Backbone.Model.extend({});
+
+var GalleryCollection = Backbone.Collection.extend({
+  model: GalleryModel
+});
+
+var galleryCollection = new GalleryCollection();
+
+galleryCollection.add([
+	{"filename": "1pattern"},
+	{"filename": "2pattern"}
+]);
 
 var GalleryView = Backbone.View.extend({
-	tagName: 'section',
-	//model:TriPictures,
-	template: template.gallery,
-	// events: {'click': 'click'},
-	initialize: function(opts){
-		this.n = opts.n;
-		this.$el.html(template.gallery);
-		//this.$el.appendTo(opts.$div); 
-	},
-	render: function(){
-		 // or this.template
-		// var self = this;
-		// for (var i = 0; i<6; ++i){
-		// 	var gallery = TriPictures[i];
-		// 	this.$el.append(gallery.$el);
-		// 	gallery.render();
-		// }
-	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
+  tagName: 'section',
+  //template: templates.gallery,
+  initialize: function (opts) {
+    this.$el.html(templates.gallery());
+  },
+  render: function () {
+	  var outputHtml = '';
+      this.collection.models.forEach(function (item) {
+	      var data = {};
+	      data.filename = item.get('filename');
+	      outputHtml += templates.galleryItems(data);
+  		})
+      this.$el.html(outputHtml)
+  	}
 });
 
 var AboutView = Backbone.View.extend({
@@ -269,9 +299,6 @@ var AboutView = Backbone.View.extend({
 	render: function(){
 
 	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
 });
 
 var MainView = Backbone.View.extend({
@@ -307,7 +334,8 @@ var MainView = Backbone.View.extend({
 	},
 	render: function() {
 		console.log('something happening');
-
+		galleryView = new GalleryView({collection: this.collection});
+    	galleryView.render();
 		return this;
 	}
 
@@ -318,9 +346,8 @@ var MainView = Backbone.View.extend({
 var page = null, trianglify = null;
 function makePage() {
 	//trianglify = new TriPictures();
-	page = new MainView(); //MainView({collection:trianglify});
+	page = new MainView({collection:galleryCollection});
 	page.render();
-		
-
 }
+
 $(makePage);

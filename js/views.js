@@ -236,31 +236,60 @@ var CanvasView = Backbone.View.extend({
 		// }
 		});
 
-// var 
-
+// 
 var GalleryView = Backbone.View.extend({
-	tagName: 'section',
-	model:TriPictures,
-	template: template.gallery,
-	// events: {'click': 'click'},
-	initialize: function(opts){
-		this.n = opts.n;
-		this.$el.html(template.gallery);
-		//this.$el.appendTo(opts.$div); 
-	},
-	render: function(){
-		 // or this.template
-		// var self = this;
-		// for (var i = 0; i<6; ++i){
-		// 	var gallery = TriPictures[i];
-		// 	this.$el.append(gallery.$el);
-		// 	gallery.render();
-		// }
-	},
-	// click: function(evt) {
-	// 	this.collection.refresh(this.n);
-	// }
+  tagName: 'section',
+	 template: template.gallery,
+  initialize: function (opts) {
+    this.$el.html(template.gallery);
+  },
+  render: function () {
+		var galleryTemplate = this.collection.models.forEach(function (template.gallery) {
+      outputHtml += template.gallery;
+    });
+//     var outputHtml = '<section>' +
+        '<div class="container">' +
+            '<div class="row">' +
+                '<div class="col-lg-12 text-center">' +
+                    '<h2>Gallery</h2>' +
+                    '<hr class="down">' +
+                '</div>' +
+            '</div>' +
+            '<div class="row">' +
+			   	'<ul>'+ galleryTemplate + '</ul>'+
+			   '</div>' +
+	        '</div>' +
+		  '</section>'; 
+    $(this.el).html(outputHtml);
+  }
 });
+
+
+
+// var GalleryView = Backbone.View.extend({
+// 	tagName: 'section',
+// 	model:TriPictures,
+// 	template: template.gallery,
+// 	// events: {'click': 'click'},
+// 	initialize: function(opts){
+// 		this.n = opts.n;
+// 		this.$el.html(template.gallery);
+// 		//this.$el.appendTo(opts.$div); 
+// 		//var pattern = Trianglify({color_function: colorFunc from db})
+// 	},
+// 	render: function(){
+// 		 // or this.template
+// 		// var self = this;
+// 		// for (var i = 0; i<6; ++i){
+// 		// 	var gallery = TriPictures[i];
+// 		// 	this.$el.append(gallery.$el);
+// 		// 	gallery.render();
+// 		// }
+// 	},
+// 	// click: function(evt) {
+// 	// 	this.collection.refresh(this.n);
+// 	// }
+// });
 
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
