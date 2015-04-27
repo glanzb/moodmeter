@@ -178,6 +178,7 @@ var CanvasView = Backbone.View.extend({
 				//////////////////////////////////
 				//poster
 				//////////////////////////////////
+
 				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
 					if(data === 'done'){
 						alert('post')

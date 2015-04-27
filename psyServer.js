@@ -30,9 +30,16 @@ app.get('/test', function(req,res){
 // route for post
 app.post('/api', function(req,res){
   var time = req.body.time;
-  var colorFn = req.body.colorFn;
+
+  var colorFn = { "time": time,
+                  "colorFn": req.body.colorFn}
 
   console.log("time: "+ time + "  colorFn: " + colorFn);
+
+  db.put('newThing', time, colorFn, false)
+  .then(function(res){console.log('one datum posted to db. datum id:  '+ time)})
+  .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
+  
   res.end('yes');
 })
 
@@ -120,48 +127,48 @@ setInterval(function(){
   for (prop in wordData.words){
     wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
   }
+
   wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
   wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
   oldWordData = deep_.deepClone(wordData);
   //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
+
 }, 2000);
 
-dbCollectionName = 'thing'
+//dbCollectionName = 'thing';
 
 //send a wordData object to db every x ms
-setInterval(function(){
-  //console.log(wordData["time"].toString());
-  var current_wordData = wordData;
-  console.log(current_wordData.time.toString());
-  db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
-  .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
-  .fail(function(error){console.log('db post failed: '+error.
-
-    body)});
-}, 500000);
+// setInterval(function(){
+//   //console.log(wordData["time"].toString());
+//   var current_wordData = wordData;
+//   console.log(current_wordData.time.toString());
+//   db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
+//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+//   .fail(function(error){console.log('db post failed: '+error.body)});
+// }, 500000);
 
 
 
-function msToDate(ms){
-  var date = new Date(1429836376150).toLocaleString();
-  return date  
-}
+// function msToDate(ms){
+//   var date = new Date(1429836376150).toLocaleString();
+//   return date  
+// }
 
-function dateToMs(dateString){ //dateToMs("March 21, 2012") --> 1332313200000
-  var ms = Date.parse(dateString)
-  return ms
-}
+// function dateToMs(dateString){ //dateToMs("March 21, 2012") --> 1332313200000
+//   var ms = Date.parse(dateString)
+//   return ms
+// }
 
-//make a db query every day for yesterday's posts
+// //make a db query every day for yesterday's posts
 
-app.get('/test/api', function(req,res){
+// app.get('/test/api', function(req,res){
 
-  function getValue(obj) {
-    var val = obj.value;
-    val.id = val.key;
-    return val;
-}
+//   function getValue(obj) {
+//     var val = obj.value;
+//     val.id = val.key;
+//     return val;
+// }
 
   // Handle success:
   // function forwardOrchResults(result) {
@@ -187,7 +194,7 @@ app.get('/test/api', function(req,res){
   //   .fail(handleFailure)
 
 
-});
+//});
 
 
 
