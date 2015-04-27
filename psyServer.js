@@ -1,14 +1,18 @@
 
 //dependencies
 var config = require('./config.js');
+
 var express = require('express');
 var app = express();
+var bodyParser = require("body-parser"); 
 var http = require('http').Server(app);
+
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
 var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
 
+app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
 app.use('/', express.static(__dirname + '/'));
 
@@ -21,6 +25,17 @@ app.get('/', function(req,res){
 app.get('/test', function(req,res){
   res.sendFile(__dirname + '/testFiles/testIndex.html');
 });
+
+
+// route for post
+app.post('/api', function(req,res){
+  var time = req.body.time;
+  var colorFn = req.body.colorFn;
+
+  console.log("time: "+ time + "  colorFn: " + colorFn);
+  res.end('yes');
+})
+
 
 //turn on the server
 http.listen(3000, function(){
@@ -108,7 +123,7 @@ setInterval(function(){
   wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
   wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
   oldWordData = deep_.deepClone(wordData);
-  console.log(wordData.wordsFreqProportions);
+  //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 }, 2000);
 
@@ -149,27 +164,27 @@ app.get('/test/api', function(req,res){
 }
 
   // Handle success:
-  function forwardOrchResults(result) {
-      //given result obj from Orchestrate db, strip away metadata
-      // and forward the actual model data to client:
-      var values = result.body.results.map(getValue);
-      var json = JSON.stringify(values);
-      console.log("Returning array: "+json);
-      res.end(json); //return JSON array to client
-  }
+  // function forwardOrchResults(result) {
+  //     //given result obj from Orchestrate db, strip away metadata
+  //     // and forward the actual model data to client:
+  //     var values = result.body.results.map(getValue);
+  //     var json = JSON.stringify(values);
+  //     console.log("Returning array: "+json);
+  //     res.end(json); //return JSON array to client
+  // }
 
-  // Handle failure:
-  function handleFailure(err) {
-      console.log("Error: "+err);
-      res.end(err);
-  }
-  db.newSearchBuilder()
-    .collection(dbCollectionName)
-    .limit(100)
-    .sort('key','asc')
-    .query(searchStr)  //key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
-    .then(forwardOrchResults) // makeChart
-    .fail(handleFailure)
+  // // Handle failure:
+  // function handleFailure(err) {
+  //     console.log("Error: "+err);
+  //     res.end(err);
+  // }
+  // db.newSearchBuilder()
+  //   .collection(dbCollectionName)
+  //   .limit(100)
+  //   .sort('key','asc')
+  //   .query(searchStr)  //key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
+  //   .then(forwardOrchResults) // makeChart
+  //   .fail(handleFailure)
 
 
 });
