@@ -108,6 +108,7 @@ $(function(){
 	
 window.setInterval(function(){
 	$.get("http://localhost:3000/api", function(data){
+		//galleryCollection.add(data);
 		console.log("help");
 		console.log(data);
 	})
