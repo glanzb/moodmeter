@@ -1,14 +1,20 @@
 
 //dependencies
 var config = require('./config.js');
+
 var express = require('express');
 var app = express();
+var bodyParser = require("body-parser"); 
 var http = require('http').Server(app);
+
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
 var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
 
+var lastTimeStamp;
+
+app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
 app.use('/', express.static(__dirname + '/'));
 
@@ -21,6 +27,44 @@ app.get('/', function(req,res){
 app.get('/test', function(req,res){
   res.sendFile(__dirname + '/testFiles/testIndex.html');
 });
+
+
+app.get('/api', function(req, res){
+  db.list ('newThing', {limit:5, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  .then(function(result){
+    console.log(JSON.stringify(result.body.results[0]))
+    res.end(JSON.stringify(result.body.results[0]));
+    //res.end("hi")
+  })
+  .fail(function(err){
+    console.log("get.fail: " + JSON.stringify(err))
+  })
+})
+
+// setInterval(
+//   db.list ('newThing', {limit:5, endKey: lastTimeStamp})
+//   .then(function(result){
+//     console.log(result.body)
+//   }), 10000);
+
+// route for post
+app.post('/api', function(req,res){
+  var time = req.body.time;
+
+  var colorFn = { "time": time,
+                  "colorFn": req.body.colorFn}
+
+  //console.log("time: "+ time + "  colorFn: " + colorFn);
+
+  db.put('newThing', time, colorFn, false)
+  .then(function(res){console.log('one datum posted to db. datum id:  '+ time);
+    lastTimeStamp = time.toString();
+  })
+  .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
+  
+  res.end('yes');
+})
+
 
 //turn on the server
 http.listen(3000, function(){
@@ -105,76 +149,28 @@ setInterval(function(){
   for (prop in wordData.words){
     wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
   }
+
   wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
   wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
   oldWordData = deep_.deepClone(wordData);
-  console.log(wordData.wordsFreqProportions);
+  //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
-}, 2000);
 
-dbCollectionName = 'thing'
+}, 2000);ß
+
+
+
+//dbCollectionName = 'thing';
 
 //send a wordData object to db every x ms
-setInterval(function(){
-  //console.log(wordData["time"].toString());
-  var current_wordData = wordData;
-  console.log(current_wordData.time.toString());
-  db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
-  .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
-  .fail(function(error){console.log('db post failed: '+error.body)});
-}, 5000005);
-
-
-
-function msToDate(ms){
-  var date = new Date(1429836376150).toLocaleString();
-  return date  
-}
-
-function dateToMs(dateString){ //dateToMs("March 21, 2012") --> 1332313200000
-  var ms = Date.parse(dateString)
-  return ms
-}
-
-//make a db query every day for yesterday's posts
-
-app.get('/test/api', function(req,res){
-
-  function getValue(obj) {
-    var val = obj.value;
-    val.id = val.key;
-    return val;
-}
-
-  // Handle success:
-  function forwardOrchResults(result) {
-      //given result obj from Orchestrate db, strip away metadata
-      // and forward the actual model data to client:
-      var values = result.body.results.map(getValue);
-      var json = JSON.stringify(values);
-      console.log("Returning array: "+json);
-      res.end(json); //return JSON array to client
-  }
-
-  // Handle failure:
-  function handleFailure(err) {
-      console.log("Error: "+err);
-      res.end(err);
-  }
-  db.newSearchBuilder()
-    .collection(dbCollectionName)
-    .limit(100)
-    .sort('key','asc')
-    .query(searchStr)  //key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
-    .then(forwardOrchResults) // makeChart
-    .fail(handleFailure)
-
-
-});
-
-
-
-
+// setInterval(function(){
+//   //console.log(wordData["time"].toString());
+//   var current_wordData = wordData;
+//   console.log(current_wordData.time.toString());
+//   db.put(dbCollectionName, current_wordData.time.toString(), current_wordData, false)
+//   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
+//   .fail(function(error){console.log('db post failed: '+error.body)});
+// }, 500000);
 
 
 

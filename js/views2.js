@@ -1,15 +1,21 @@
 var socket = io();
 var wordData;
 
-		$(function(){	
-			socket.on('data', function(wordData){
-				window.setInterval(function() {
-				$('#data').text("");
-				$('#data').text(JSON.stringify(wordData.tweet));			
-		  	}, 2000);
-		});
-	});		
+$(function(){	
+	socket.on('data', function(wordData){
+		$('#data').text("");
+		$('#data').text(JSON.stringify(wordData.tweet));			
+	});
+});		
 	
+window.setInterval(function(){
+	$.get("http://localhost:3000/api", function(data){
+		//galleryCollection.add(data);
+		console.log("help");
+		console.log(data);
+	})
+
+}, 4000)	
 
 
 var DataView = Backbone.View.extend({
@@ -39,11 +45,12 @@ var DataView = Backbone.View.extend({
 var CanvasView = Backbone.View.extend({
 	tagName: 'div',
 
-		triangles: function(){
+	triangles: function(){
 
 		$(function(){
 			var hFreq = [1, 1];
 			var gFreq = [1, 1];
+			var colorFuncString;
 
 			socket.on('timedData', function(wordData){
 				//console.log(hFreq);
@@ -67,7 +74,8 @@ var CanvasView = Backbone.View.extend({
 						color_function: function(x, y) {
 							//console.log(y)
 							//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-							return 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+							colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+							return colorFuncString
 						}
 						
 					});
@@ -76,7 +84,18 @@ var CanvasView = Backbone.View.extend({
 					$("#picture").append(pattern.canvas());
 					
 				}, 50, 20);
-			});
+
+				//////////////////////////////////
+				//poster
+				//////////////////////////////////
+
+				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
+					if(data === 'done'){
+						alert('post')
+					};
+				});
+
+			})
 
 
 
@@ -106,8 +125,8 @@ var CanvasView = Backbone.View.extend({
 			};
 
 		});
+	},
 
-			},
 
 	// events: {'click': 'click'},
 	initialize: function(opts){
@@ -145,6 +164,7 @@ galleryCollection.add([
 	{"filename": "1pattern"},
 	{"filename": "2pattern"}
 ]);
+
 
 var GalleryView = Backbone.View.extend({
   tagName: 'section',
