@@ -11,8 +11,15 @@ var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
 var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
+var _ = require('underscore')
 
 var lastTimeStamp;
+
+// polling for heroku
+// sockets.configure(function() {
+//   sockets.set('transports', ['xhr-polling']);
+//   sockets.set('polling duration', 10);
+// });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
@@ -30,10 +37,19 @@ app.get('/test', function(req,res){
 
 
 app.get('/api', function(req, res){
-  db.list ('newThing', {limit:5, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  db.list ('newThing', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
   .then(function(result){
-    console.log(JSON.stringify(result.body.results[0]))
-    res.end(JSON.stringify(result.body.results[0]));
+
+    
+    var resultValues = _.pluck(result.body.results, 'value');
+    for(var i = 0; i < resultValues.length; i++){
+      delete resultValues[i].time
+    }
+
+    //var colorFnArr = _.pluck(resultValues, 'colorFn');
+
+    console.log(JSON.stringify(resultValues));
+    res.end(JSON.stringify(resultValues));
     //res.end("hi")
   })
   .fail(function(err){
@@ -156,7 +172,7 @@ setInterval(function(){
   //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 
-}, 2000);ß
+}, 2000);
 
 
 
