@@ -12,6 +12,8 @@ var Twitter = require('node-tweet-stream');
 var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
 
+var lastTimeStamp;
+
 app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
 app.use('/', express.static(__dirname + '/'));
@@ -27,6 +29,24 @@ app.get('/test', function(req,res){
 });
 
 
+app.get('/api', function(req, res){
+  db.list ('newThing', {limit:5, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  .then(function(result){
+    console.log(JSON.stringify(result.body.results[0]))
+    res.end(JSON.stringify(result.body.results[0]));
+    //res.end("hi")
+  })
+  .fail(function(err){
+    console.log("get.fail: " + JSON.stringify(err))
+  })
+})
+
+// setInterval(
+//   db.list ('newThing', {limit:5, endKey: lastTimeStamp})
+//   .then(function(result){
+//     console.log(result.body)
+//   }), 10000);
+
 // route for post
 app.post('/api', function(req,res){
   var time = req.body.time;
@@ -34,10 +54,12 @@ app.post('/api', function(req,res){
   var colorFn = { "time": time,
                   "colorFn": req.body.colorFn}
 
-  console.log("time: "+ time + "  colorFn: " + colorFn);
+  //console.log("time: "+ time + "  colorFn: " + colorFn);
 
   db.put('newThing', time, colorFn, false)
-  .then(function(res){console.log('one datum posted to db. datum id:  '+ time)})
+  .then(function(res){console.log('one datum posted to db. datum id:  '+ time);
+    lastTimeStamp = time.toString();
+  })
   .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
   
   res.end('yes');
@@ -136,6 +158,8 @@ setInterval(function(){
 
 }, 2000);
 
+
+
 //dbCollectionName = 'thing';
 
 //send a wordData object to db every x ms
@@ -150,51 +174,7 @@ setInterval(function(){
 
 
 
-// function msToDate(ms){
-//   var date = new Date(1429836376150).toLocaleString();
-//   return date  
-// }
 
-// function dateToMs(dateString){ //dateToMs("March 21, 2012") --> 1332313200000
-//   var ms = Date.parse(dateString)
-//   return ms
-// }
-
-// //make a db query every day for yesterday's posts
-
-// app.get('/test/api', function(req,res){
-
-//   function getValue(obj) {
-//     var val = obj.value;
-//     val.id = val.key;
-//     return val;
-// }
-
-  // Handle success:
-  // function forwardOrchResults(result) {
-  //     //given result obj from Orchestrate db, strip away metadata
-  //     // and forward the actual model data to client:
-  //     var values = result.body.results.map(getValue);
-  //     var json = JSON.stringify(values);
-  //     console.log("Returning array: "+json);
-  //     res.end(json); //return JSON array to client
-  // }
-
-  // // Handle failure:
-  // function handleFailure(err) {
-  //     console.log("Error: "+err);
-  //     res.end(err);
-  // }
-  // db.newSearchBuilder()
-  //   .collection(dbCollectionName)
-  //   .limit(100)
-  //   .sort('key','asc')
-  //   .query(searchStr)  //key:[dateToMs(April 24, 2015) TO dateToMs(April 25, 2015) ]
-  //   .then(forwardOrchResults) // makeChart
-  //   .fail(handleFailure)
-
-
-//});
 
 
 
