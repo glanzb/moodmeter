@@ -1,7 +1,10 @@
+_.templateSettings = {
+  interpolate: /\{\{(.+?)\}\}/g
+};
+
 templates = {}; 
 
-templates.gallery = _.template(
-    '<section>' +
+templates.galleryHead = _.template(    
         '<div class="container">' +
             '<div class="row">' +
                 '<div class="col-lg-12 text-center">' +
@@ -10,16 +13,9 @@ templates.gallery = _.template(
                 '</div>' +
             '</div>' +
             '<div class="row">' +
-                '<ul> {{galleryItems}} </ul>'+
-            '</div>' +
-        '</div>' +
-    '</section>'); 
+                '<ul>');
 
-
-
-  
 templates.galleryItems = _.template(
-
     '<li class="col-xs-6">'+
         '<div class="caption">' +
             '<div class="caption-content">' +
@@ -29,4 +25,14 @@ templates.galleryItems = _.template(
         '<img src="img/{{filename}}.svg" class="img-responsive" alt="">' +
         '<p>title</p>' +
     '</li>');
+
+templates.galleryFoot = _.template(
+                '</ul>'+
+            '</div>' +
+        '</div>'); 
+
+
+
+  
+
 

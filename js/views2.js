@@ -1,101 +1,3 @@
-// --- Models ---
-/*var TriPictures = (function() {
-	var TriPic = Backbone.Model.extend({
-	});
-
-
-
-
-	  var arr = [];
-	    for (elem in Trianglify.colorbrewer) {
-	      arr.push(Trianglify.colorbrewer[elem]);
-	    }
-	  var i = 1; 
-      
-    var pattern = Trianglify({
-        width: 800,//window.innerWidth, //defaults to 600
-        height: 600,//window.innerHeight, //defaults to 400
-        cell_size: 75, // default
-        palette: Trianglify.colorbrewer,
-        variance: 0.75, // value between 0 and 1 (inclusive), defaults to 0.75. Specify the amount of randomness used when generating triangles.
-        x_colors: arr[i], //'random',
-        //y_colors: 'match_x',
-        color_space: 'lab',
-        color_function: false,//colorFunc, 
-        stroke_width: 5.51,
-        seed: null //defaults to null. Seeds the random number generator to create repeatable patterns
-    });
-
-    var pngURI = pattern.png();
-    var data = pngURI.substr(pngURI.indexOf('base64') + 7); // this data is not that data
-    	console.log(data);
-    	console.log(pngURI);
-    var svg = pattern.svg();
-    	console.log(pngURI);
-
-    function makePic(pattern){
-     	return {
-     		pattern:pattern
-     	}
-    };
-
-	var TriPictures = Backbone.Collection.extend({
-		model:TriPic,
-		initialize: function() {
-			this.pattern=pattern // pattern accesible
-		// 	document.getElementById('main').appendChild(pattern.canvas(document.getElementById('picture')));
-		// },
-		// refresh: function(){
-			//var model = this.pattern
-			//model.set()
-		}
-	});
-
-	return TriPictures;
-})(); //end IIFE
-
-
-var Data = Backbone.Model.extend({});
-var data = new Data({
-
-	initialize: $(function(){
-		var socket = io();
-		      // $('form').submit(function(){
-		      //   socket.emit('input', $('#m').val());
-		      //   $('#m').val('');
-		      //   return false;
-		      // });
-
-		socket.on('data', function(wordData){
-		  //console.log(wordData);
-		  $('#data').text("");
-		  $('#data').text(JSON.stringify(wordData));
-		  return wordData;
-		  //console.log(wordData.text);
-		  //drawBar(twitCount);
-		});
-	})
-});*/
-
-
-// --- Views ---
-// var NavView = Backbone.View.extend({
-// 	tagName: 'div',
-// 	template: template.nav,
-// 	// events: {'click': 'click'},
-// 	initialize: function(opts){
-// 		this.n = opts.n;
-// 		this.$el.html(template.nav);
-// 		//this.$el.appendTo(opts.$div); 
-// 	},
-// 	render: function(){
-
-// 	},
-// 	// click: function(evt) {
-// 	// 	this.collection.refresh(this.n);
-// 	// }
-// });
-
 var socket = io();
 var wordData;
 
@@ -157,8 +59,8 @@ var CanvasView = Backbone.View.extend({
 					var yShift = lerp(gFreq[1], gFreq[0], i);
 					i++;
 					pattern = Trianglify({
-						height: 400,
-						width: 1000,
+						height: 600,
+						width: 800,
 						variance: .5 + ((Math.random()-0.5)/10),
 						cell_size: 100,  //Math.ceil(Math.random()*100),
 						seed: 'gn26p',
@@ -230,31 +132,6 @@ var CanvasView = Backbone.View.extend({
 			// }
 });
 
-// 
-
-// var GalleryView = Backbone.View.extend({
-// 	tagName: 'section',
-// 	//model:TriPictures,
-// 	template: template.gallery,
-// 	// events: {'click': 'click'},
-// 	initialize: function(opts){
-// 		this.n = opts.n;
-// 		this.$el.html(template.gallery);
-// 		//this.$el.appendTo(opts.$div); 
-// 	},
-// 	render: function(){
-// 		 // or this.template
-// 		// var self = this;
-// 		// for (var i = 0; i<6; ++i){
-// 		// 	var gallery = TriPictures[i];
-// 		// 	this.$el.append(gallery.$el);
-// 		// 	gallery.render();
-// 		// }
-// 	},
-// 	// click: function(evt) {
-// 	// 	this.collection.refresh(this.n);
-// 	// }
-// });
 
 var GalleryModel = Backbone.Model.extend({});
 
@@ -271,33 +148,34 @@ galleryCollection.add([
 
 var GalleryView = Backbone.View.extend({
   tagName: 'section',
+  collection : galleryCollection,
   //template: templates.gallery,
   initialize: function (opts) {
-    this.$el.html(templates.gallery());
-  },
-  render: function () {
-	  var outputHtml = '';
+  	var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
 	      var data = {};
 	      data.filename = item.get('filename');
 	      outputHtml += templates.galleryItems(data);
+	      console.log(outputHtml);
   		})
+      outputHtml += templates.galleryFoot();
       this.$el.html(outputHtml)
+    //this.$el.html(templates.gallery());
+  },
+  render: function () {
+	  
   	}
 });
 
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
 	template: template.about,
-	// events: {'click': 'click'},
-	
+		
 	initialize: function(opts){
 		this.n = opts.n;
 		this.$el.html(template.about);
-		//this.$el.appendTo(opts.$div); 
 	},
 	render: function(){
-
 	},
 });
 
@@ -313,7 +191,6 @@ var MainView = Backbone.View.extend({
 		
 			var opts = {
 				collection: self.collection,
-				//className: 'container',
 				id: id
 			}
 		

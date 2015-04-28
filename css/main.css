@@ -38,6 +38,10 @@ h6 {
     font-weight: 700;
 }
 
+#main {
+    margin-top: 70px;
+}
+
 hr.down {
     margin: 25px auto 30px;
     padding: 0;
@@ -163,9 +167,9 @@ header .intro-text .skills {
     border: 0;
 }
 
-section {
+/*section {
     padding: 100px 0;
-}
+}*/
 
 section h2 {
     margin: 0;
@@ -176,9 +180,11 @@ section h2 {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
-    max-height: 200px;
-    min-height: 200px;
+    max-height: 100px;
+    min-height: 100px;
     overflow: hidden;
+    position: relative;
+    margin-top: -100;
 }
 
 /*section.about {
@@ -195,7 +201,7 @@ section.about a.active {
     color: #2c3e50;
 }
 */
-@media(max-width:767px) {
+/*@media(max-width:767px) {
     section {
         padding: 75px 0;
     }
@@ -203,7 +209,7 @@ section.about a.active {
     section.first {
         padding-top: 75px;
     }
-}
+}*/
 
 #gallery .gallery-item {
     right: 0;
@@ -286,6 +292,7 @@ section.about a.active {
     display: inline-block;
     width: 50px;
     height: 50px;
+    padding: 10px;
     border: 2px solid #fff;
     border-radius: 100%;
     text-align: center;
