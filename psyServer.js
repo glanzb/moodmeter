@@ -156,7 +156,7 @@ setInterval(function(){
   //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 
-}, 2000);
+}, 2000);ß
 
 
 
@@ -171,14 +171,6 @@ setInterval(function(){
 //   .then(function(res){console.log('one datum posted to db. datum id:  '+ current_wordData.time.toString())})
 //   .fail(function(error){console.log('db post failed: '+error.body)});
 // }, 500000);
-
-
-
-
-
-
-
-
 
 
 
