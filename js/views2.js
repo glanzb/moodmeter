@@ -99,13 +99,21 @@ var data = new Data({
 var socket = io();
 var wordData;
 
-	$(function(){	
-		socket.on('data', function(wordData){
-			$('#data').text("");
-			$('#data').text(JSON.stringify(wordData.tweet));			
-		});
-	});		
+$(function(){	
+	socket.on('data', function(wordData){
+		$('#data').text("");
+		$('#data').text(JSON.stringify(wordData.tweet));			
+	});
+});		
 	
+window.setInterval(function(){
+	$.get("http://localhost:3000/api", function(data){
+		//galleryCollection.add(data);
+		console.log("help");
+		console.log(data);
+	})
+
+}, 4000)	
 
 
 var DataView = Backbone.View.extend({
