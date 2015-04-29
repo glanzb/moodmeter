@@ -7,6 +7,7 @@ var config = (process.env.HEROKU)?
   twtToken: process.env.twtToken,
   twtToken_secret: process.env.twtToken_secret,
   dbKey: process.env.dbKey,
+  API_key: process.env.API_key,
 } :
 require('./config.js');
 
