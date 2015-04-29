@@ -1,6 +1,14 @@
 
 //dependencies
-var config = require('./config.js');
+var config = (process.env.HEROKU)?
+{
+  twtConsumer_key: process.env.twtConsumer_key,
+  twtConsumer_secret: process.env.twtConsumer_secret,
+  twtToken: process.env.twtToken,
+  twtToken_secret: process.env.twtToken_secret,
+  dbKey: process.env.dbKey,
+} :
+require('./config.js');
 
 var express = require('express');
 var app = express();
@@ -13,6 +21,18 @@ var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
 
 var lastTimeStamp;
+
+
+//var sockets = io.listen(http);
+// polling for heroku
+
+if (process.env.HEROKU) {
+//io.configure(function() {
+  function runner() {
+  io.set('transports', ['xhr-polling']);
+  io.set('polling duration', 10);
+};  // end function
+} // end if()
 
 app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
@@ -156,7 +176,7 @@ setInterval(function(){
   //console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 
-}, 2000);ß
+}, 2000);
 
 
 
