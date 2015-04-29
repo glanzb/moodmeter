@@ -152,7 +152,30 @@ var CanvasView = Backbone.View.extend({
 });
 
 
-var GalleryModel = Backbone.Model.extend({});
+var GalleryModel = Backbone.Model.extend({
+color_function: function(x, y) {
+			console.log("GalleryModel color_function");
+			//console.log(y)
+			//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
+			colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+			return colorFuncString;
+		}, //end color_function
+
+	defaults: {
+		height: 600,
+		width: 800,
+		variance: .5 + ((Math.random()-0.5)/10),
+		cell_size: 100,  //Math.ceil(Math.random()*100),
+		seed: 'gn26p',
+		
+	},  // end defaults
+
+	initialize: function(){
+		this.view = new GalleryView({model:this});
+	},	// end initialize
+});  //end GalleryModel
+
+
 
 var GalleryCollection = Backbone.Collection.extend({
   model: GalleryModel
@@ -160,10 +183,7 @@ var GalleryCollection = Backbone.Collection.extend({
 
 var galleryCollection = new GalleryCollection();
 
-galleryCollection.add([
-	{"filename": "1pattern"},
-	{"filename": "2pattern"}
-]);
+
 
 
 var GalleryView = Backbone.View.extend({
@@ -185,6 +205,16 @@ var GalleryView = Backbone.View.extend({
   render: function () {
 	  
   	}
+});
+
+$(document).ready(function(){
+galleryCollection.add([
+	{"filename": "1pattern"},
+	{"filename": "2pattern"},
+	{"filename": "3pattern"},
+	{"filename": "4pattern"},
+	{"filename": "5pattern"},
+]);
 });
 
 var AboutView = Backbone.View.extend({
