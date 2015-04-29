@@ -10,13 +10,14 @@ $(function(){
 	
 window.setInterval(function(){
 	$.get("http://localhost:3000/api", function(data){
-		galleryCollection.reset();
-		galleryCollection.add(data);
-		console.log(gallery);
+		//galleryCollection.reset();
+		_.invoke(galleryCollection.toArray(), 'destroy');
+		galleryCollection.add(JSON.parse(data));
+		console.log("help");
 		console.log(data);
 	})
 
-}, 4000)	
+}, 10000)	
 
 
 var DataView = Backbone.View.extend({
@@ -51,7 +52,9 @@ var CanvasView = Backbone.View.extend({
 		$(function(){
 			var hFreq = [1, 1];
 			var gFreq = [1, 1];
-			var colorFuncString;
+			var hue;
+			var saturation;
+			var lightness;
 
 			socket.on('timedData', function(wordData){
 				//console.log(hFreq);
@@ -65,6 +68,9 @@ var CanvasView = Backbone.View.extend({
 				interval(function(){
 					var xShift = lerp(hFreq[1], hFreq[0], i);
 					var yShift = lerp(gFreq[1], gFreq[0], i);
+					hue = Math.floor((x*50)+(xShift*200));
+					saturation = Math.floor((y)*(yShift*500));
+					lightness = (40+(y*60));
 					i++;
 					pattern = Trianglify({
 						height: 600,
@@ -75,7 +81,7 @@ var CanvasView = Backbone.View.extend({
 						color_function: function(x, y) {
 							//console.log(y)
 							//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-							colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+							colorFuncString = 'hsl(' + hue + ',' + saturation + '%,'+ lightness + '%)'
 							return colorFuncString
 						}
 						
@@ -90,7 +96,7 @@ var CanvasView = Backbone.View.extend({
 				//poster
 				//////////////////////////////////
 
-				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
+				$.post("http://localhost:3000/api", {time: Date.now(), colorFuncVals: [hue, saturation, lightness]}, function(data){
 					if(data === 'done'){
 						alert('post')
 					};
@@ -160,14 +166,10 @@ var GalleryModel = Backbone.Model.extend({
 		variance: .5 + ((Math.random()-0.5)/10),
 		cell_size: 100,  //Math.ceil(Math.random()*100),
 		seed: 'gn26p',
-		color_function: function(x, y) {
-			//console.log(y)
-			//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-			colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
-			return colorFuncString
+		color_function: function(x,y){
+			return "hsl(149,178%,71.32%)"
+			}
 		}
-
-	}
 });
 
 var GalleryCollection = Backbone.Collection.extend({
@@ -175,17 +177,17 @@ var GalleryCollection = Backbone.Collection.extend({
 
   	initialize: function(){
   		this.on('add', function(){
-  			galleryView.render;
+  			galleryView.render();
   		})
   	}
 });
 
 var galleryCollection = new GalleryCollection();
 
-galleryCollection.add([
-	{"filename": "1pattern"},
-	{"filename": "2pattern"}
-]);
+// galleryCollection.add([
+// 	{"filename": "1pattern"},
+// 	{"filename": "2pattern"}
+// ]);
 
 
 var GalleryView = Backbone.View.extend({
@@ -194,27 +196,30 @@ var GalleryView = Backbone.View.extend({
   //template: templates.gallery,
   initialize: function (opts) {
 
-  	var outputHtml = templates.galleryHead();
+  	//var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
-	      var pattern = Trianglify(this.model);
-	      data.filename = item.get('filename');
-	      outputHtml += templates.galleryItems(data.filename);
+	      var pattern = Trianglify(item.attributes);
+	      this.$el.append(pattern);
+	      //data.filename = item.get('filename');
+	      //outputHtml += templates.galleryItems(pattern.canvas());
 	      console.log(outputHtml);
   		})
-      outputHtml += templates.galleryFoot();
-      this.$el.html(outputHtml)
+      // outputHtml += templates.galleryFoot();
+      // this.$el.html(outputHtml)
     //this.$el.html(templates.gallery());
   },
   render: function () {
-	  var outputHtml = templates.galleryHead();
+	  //var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
-	      var pattern = Trianglify(this.model);
+	      var pattern = Trianglify(item.attributes);
+	      this.$el.empty();
+	      this.$el.append(pattern);
 	      //data.filename = item.get('filename');
-	      outputHtml += templates.galleryItems(pattern.canvas());
+	      //outputHtml += templates.galleryItems(pattern.canvas());
 	      console.log(outputHtml);
   		})
-      outputHtml += templates.galleryFoot();
-      this.$el.html(outputHtml)
+      // outputHtml += templates.galleryFoot();
+      // this.$el.html(outputHtml)
   	}
 });
 

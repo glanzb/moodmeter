@@ -21,7 +21,9 @@ var lastTimeStamp;
 //   sockets.set('polling duration', 10);
 // });
 
+
 app.use(bodyParser.urlencoded({ extended: false }));
+
 //expose sub directories to app
 app.use('/', express.static(__dirname + '/'));
 
@@ -35,50 +37,49 @@ app.get('/test', function(req,res){
   res.sendFile(__dirname + '/testFiles/testIndex.html');
 });
 
-
+// route for gallery data request and response
+var searchOffset = 0;
 app.get('/api', function(req, res){
-  db.list ('newThing', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  //db.list ('newThing', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  db.newSearchBuilder()
+  .collection('newThing')
+  .limit(6)
+  .offset(searchOffset)
+  .sort('key','asc')
+  .query('*')
   .then(function(result){
 
-    
+    //console.log(result.body)
     var resultValues = _.pluck(result.body.results, 'value');
     for(var i = 0; i < resultValues.length; i++){
       delete resultValues[i].time
     }
 
-    //var colorFnArr = _.pluck(resultValues, 'colorFn');
-
     console.log(JSON.stringify(resultValues));
+    searchOffset++;
     res.end(JSON.stringify(resultValues));
-    //res.end("hi")
   })
   .fail(function(err){
     console.log("get.fail: " + JSON.stringify(err))
   })
 })
 
-// setInterval(
-//   db.list ('newThing', {limit:5, endKey: lastTimeStamp})
-//   .then(function(result){
-//     console.log(result.body)
-//   }), 10000);
-
-// route for post
+// route for posting gallery data 
 app.post('/api', function(req,res){
+  //console.log(req.body['colorFuncVals[]'])
   var time = req.body.time;
-
+  //values to be stored
   var colorFn = { "time": time,
-                  "colorFn": req.body.colorFn}
-
-  //console.log("time: "+ time + "  colorFn: " + colorFn);
-
+                  "colorFuncVals": req.body['colorFuncVals[]']
+  }
+  // add to orchestrate 
   db.put('newThing', time, colorFn, false)
-  .then(function(res){console.log('one datum posted to db. datum id:  '+ time);
-    lastTimeStamp = time.toString();
+    .then(function(res){
+      console.log('one datum posted to db. datum id:  '+ time);
+      lastTimeStamp = time.toString();
   })
   .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
-  
-  res.end('yes');
+  res.end('good')
 })
 
 
@@ -99,7 +100,7 @@ var wordData = {
     "wordsFreqProportions": {},
     "tweet":       "",
     "wordChanged": "",
-    "biggest":0,
+    "biggest":0
 };
 
 //put wordList in the data object
@@ -120,7 +121,7 @@ tw.track(wordList);
 
 //on new tweet
 tw.on('tweet', function(tweet){
-  //format tweet text
+  //scrub tweet text
   var text = tweet.text.toLowerCase();
   text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
 
@@ -169,7 +170,7 @@ setInterval(function(){
   wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
   wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
   oldWordData = deep_.deepClone(wordData);
-  //console.log(wordData.wordsFreqProportions);
+  console.log(wordData.wordsFreqProportions);
   io.emit('timedData', wordData )
 
 }, 2000);
