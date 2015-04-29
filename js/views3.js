@@ -10,8 +10,9 @@ $(function(){
 	
 window.setInterval(function(){
 	$.get("http://localhost:3000/api", function(data){
-		//galleryCollection.add(data);
-		console.log("help");
+		galleryCollection.reset();
+		galleryCollection.add(data);
+		console.log(gallery);
 		console.log(data);
 	})
 
@@ -92,10 +93,10 @@ var CanvasView = Backbone.View.extend({
 				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
 					if(data === 'done'){
 						alert('post')
-					};
-				});
+					};  // end if()
+				});  // end $.post
 
-			})
+			})  //  end socket.on('timedata', ...
 
 
 
@@ -103,7 +104,7 @@ var CanvasView = Backbone.View.extend({
 				//console.log(t)
 				var interp = a + ((t * .15) * (b - a));
 				return interp
-			};
+			};  // end lerp
 
 			function interval(func, wait, times){
 			    var interv = function(w, t){
@@ -122,16 +123,16 @@ var CanvasView = Backbone.View.extend({
 			    }(wait, times);
 
 			    setTimeout(interv, wait);
-			};
+			}; //end interval
 
 		});
-	},
+	},  // end triangles
 
 
 	// events: {'click': 'click'},
 	initialize: function(opts){
 		//this.$el.addClass('#picture .setup');
-		this.triangles();
+		
 		this.render();
 		this.$el.appendTo('#picture');
 
@@ -140,8 +141,10 @@ var CanvasView = Backbone.View.extend({
 		
 		//trianglify.pattern.canvas(this.el);
 	},
+
+
 	render: function(){		
-			
+		this.triangles();	
 		return this;
 	},	
 
@@ -149,49 +152,102 @@ var CanvasView = Backbone.View.extend({
 			// click: function(evt) {
 			// 	this.collection.refresh(this.n);
 			// }
-});
+});  //end canvasView
 
 
-var GalleryModel = Backbone.Model.extend({});
+var GalleryModel = Backbone.Model.extend({
+
+color_function: function(x, y) {
+			console.log("GalleryModel color_function");
+			//console.log(y)
+			//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
+			colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+			return colorFuncString;
+		}, //end color_function
+
+	defaults: {
+		height: 600,
+		width: 800,
+		variance: .5 + ((Math.random()-0.5)/10),
+		cell_size: 100,  //Math.ceil(Math.random()*100),
+		seed: 'gn26p',
+		
+	},  // end defaults
+
+	initialize: function(){
+		this.view = new GalleryView({model:this});
+	},	// end initialize
+});  //end GalleryModel
+
 
 var GalleryCollection = Backbone.Collection.extend({
-  model: GalleryModel
-});
+  	model: GalleryModel,
+
+  	// initialize: function(){
+  	// 	this.on("add", function(){
+  	// 		console.log("GalleryCollection extend, initialize");
+  			//console.log(this.model);
+  			//galleryView.render();
+  		//}) //end this.on("add",...)
+  		
+  	//}  //end initialize
+});  //end GalleryCollection
+		
 
 var galleryCollection = new GalleryCollection();
 
-galleryCollection.add([
-	{"filename": "2pattern"},
-	{"filename": "3pattern"},
-	{"filename": "4pattern"},
-	{"filename": "5pattern"},
-	{"filename": "6pattern"},
-	{"filename": "7pattern"}
-]);
+
 
 
 var GalleryView = Backbone.View.extend({
-  tagName: 'div',
+	
+  tagName: 'section',
   collection : galleryCollection,
-  //template: templates.gallery,
+  template: template.gallery,
+
   initialize: function (opts) {
-  	var outputHtml = templates.galleryHead();
+  	this.n = opts.n;
+		this.$el.html(template.gallery);
+  	console.log("GalleryView initialize");
+  	//this.$el.html = "look here";
+  	
+  //	var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
-	      var data = {};
+	      var pattern = Trianglify(this.model);
 	      data.filename = item.get('filename');
-
-
-	      outputHtml += templates.galleryItems(data);
-	      // console.log(outputHtml);
-  		})
-      outputHtml += templates.galleryFoot();
-      this.$el.html(outputHtml)
+	      //outputHtml += templates.galleryItems(data.filename);
+	      //console.log(outputHtml);
+  		})   //end this.collection.models.forEach
+    //  outputHtml += templates.galleryFoot();
+    //  this.$el.html(outputHtml)
     //this.$el.html(templates.gallery());
-  },
+    this.$el.appendTo('#about');
+  },  //end initialize
+
   render: function () {
-	  
+	  // var outputHtml = templates.galleryHead();
+   //    this.collection.models.forEach(function (item) {
+	  //     var pattern = Trianglify(this.model);
+	  //     //data.filename = item.get('filename');
+	  //     outputHtml += templates.galleryItems(pattern.canvas());
+	  //     console.log(outputHtml);
+  	// 	})
+   //    outputHtml += templates.galleryFoot();
+   //    this.$el.html(outputHtml)
+   return this;
   	}
+});  //end GalleryView()
+
+
+$(document).ready(function(){
+	galleryCollection.add([
+	{"filename": "1pattern"},
+	{"filename": "2pattern"},
+	{"filename": "3pattern"},
+]);
 });
+
+
 
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
@@ -200,6 +256,7 @@ var AboutView = Backbone.View.extend({
 	initialize: function(opts){
 		this.n = opts.n;
 		this.$el.html(template.about);
+		this.$el.appendTo('#gallery');
 	},
 	render: function(){
 	},
@@ -230,7 +287,7 @@ var MainView = Backbone.View.extend({
 		
 		makeSubView('picture',CanvasView);
 		makeSubView('data',DataView);
-		makeSubView('gallery',GalleryView);
+		//makeSubView('gallery',GalleryView);
 		makeSubView('about', AboutView);
 		
 		//this.$el.appendTo('body');	
@@ -252,5 +309,7 @@ function makePage() {
 	page = new MainView({collection:galleryCollection});
 	page.render();
 }
+
+
 
 $(makePage);
