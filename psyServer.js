@@ -26,13 +26,13 @@ var lastTimeStamp;
 //var sockets = io.listen(http);
 // polling for heroku
 
-if (process.env.HEROKU) {
+//if (process.env.HEROKU) {
 //io.configure(function() {
   function runner() {
   io.set('transports', ['xhr-polling']);
   io.set('polling duration', 10);
 };  // end function
-} // end if()
+//} // end if()
 
 app.use(bodyParser.urlencoded({ extended: false }));
 //expose sub directories to app
