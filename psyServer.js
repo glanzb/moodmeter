@@ -88,8 +88,9 @@ app.post('/api', function(req,res){
 
 
 //turn on the server
-http.listen(3000, function(){
-  console.log('listening on localhost:3000');
+var portage = process.env.PORT || 3000
+http.listen(portage, function(){
+  console.log('listening on localhost: ' + portage);
 });
 
 //words for twitter api to track
