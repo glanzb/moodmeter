@@ -23,7 +23,7 @@ var http = require('http').createServer(app);
 
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
-var db = require('orchestrate')(config.db_key);
+// var db = require('orchestrate')(config.db_key);
 var deep_ = require('underscore.deep');
 var _ = require('underscore')
 
