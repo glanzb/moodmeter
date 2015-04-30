@@ -10,7 +10,7 @@ if (process.env.HEROKU) {
  twtConsumer_secret: process.env['twtConsumer_secret'],
  twtToken: process.env['twtToken'],
  twtToken_secret: process.env['twtToken_secret'],
- dbKey: process.env['dbKey'],
+ db_key: process.env['db_key'],
  API_key: process.env['API_key']}
 } else{
 config = require('./config.js');
