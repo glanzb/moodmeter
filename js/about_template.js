@@ -18,8 +18,11 @@ templates.about = _.template(
 
             '<h4>{{name}}</h4>'+
             '<img src="./img/{{usPic}}.jpg" class="img-responsive img-circle" >' +
-                    '<a href="{{website}}" target="_blank" class="btn btn-xs btn-outline">'+
-                        '<i class="fa fa-globe"></i> '+
+                    // '<a href="{{website}}" target="_blank" class="btn btn-xs btn-outline">'+
+                    //     '<i class="fa fa-globe"></i> '+
+                    // '</a>'+
+                    '<a href="mailto:{{email}}" target="_blank" class="btn btn-xs btn-outline">'+
+                        '<i class="fa fa-envelope-o"></i> '+
                     '</a>'+
                     '<a href="{{github}}" target="_blank" class="btn btn-xs btn-outline">'+
                         '<i class="fa fa-github"></i> '+

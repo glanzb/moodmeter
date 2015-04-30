@@ -190,12 +190,13 @@ var GalleryView = Backbone.View.extend({
 
 $(document).ready(function(){
 	galleryCollection.add([
-	{"filename": "2pattern", "title": "sad"},
-	{"filename": "3pattern", "title": "happy"},
-	{"filename": "4pattern", "title": "sad"},
-	{"filename": "5pattern", "title": "sad"},
-	{"filename": "6pattern", "title": "sad"},
-	{"filename": "7pattern", "title": "sad"}
+	{"filename": "2pattern", "title": "Sad but good"},
+	{"filename": "3pattern", "title": "Happy and good"},
+	{"filename": "8pattern", "title": "Happy but bad"},
+	//{"filename": "4pattern", "title": "sad"},
+	//{"filename": "5pattern", "title": "sad"},
+	// {"filename": "6pattern", "title": "sad"},
+	{"filename": "7pattern", "title": "Sad and bad"}
 ]);
 });
 
@@ -206,9 +207,9 @@ var AboutView = Backbone.View.extend({
 		var aboutUs = templates.aboutHead();
 		
 		var allOfUs = [
-			{"name": "Brigitta Glanz", "usPic": "brigitta", "website": "http://glanzb.com", "github": "https://github.com/glanzb", "linkedin": "https://www.linkedin.com/in/glanzb"},
-			{"name": "Peter Rockwood", "usPic": "peter", "website": "http://glanzb.com", "github": "https://github.com/prockwood", "linkedin": "https://www.linkedin.com/pub/peter-rockwood/9b/23/414"},
-			{"name": "John Theisen", "usPic": "john", "website": "http://glanzb.com", "github": "https://github.com/aqvp", "linkedin": "https://www.linkedin.com/in/glanzb"}
+			{"name": "Brigitta Glanz", "usPic": "brigitta", "email": "glanzb@gmail.com", "website": "http://glanzb.com", "github": "https://github.com/glanzb", "linkedin": "https://www.linkedin.com/in/glanzb"},
+			{"name": "Peter Rockwood", "usPic": "peter", "email": "peter.rockwood@gmail.com", "github": "https://github.com/prockwood", "linkedin": "https://www.linkedin.com/pub/peter-rockwood/9b/23/414"},
+			{"name": "John Theisen", "usPic": "john", "email": "theisen83@yahoo.com", "github": "https://github.com/aqvp", "linkedin": "https://www.linkedin.com/in/glanzb"}
 		];
 
 		allOfUs.forEach(function (item) {
