@@ -1,6 +1,17 @@
 
 //dependencies
-var config = require('./config.js');
+//var config = require('./config.js');
+
+var config = (process.env.HEROKU)?
+{
+ twtConsumer_key: process.env.twtConsumer_key,
+ twtConsumer_secret: process.env.twtConsumer_secret,
+ twtToken: process.env.twtToken,
+ twtToken_secret: process.env.twtToken_secret,
+ dbKey: process.env.dbKey,
+ API_key: process.env.API_key,
+} :
+require('./config.js');
 
 var express = require('express');
 var app = express();
@@ -15,11 +26,11 @@ var _ = require('underscore')
 
 var lastTimeStamp;
 
-// polling for heroku
-// sockets.configure(function() {
-//   sockets.set('transports', ['xhr-polling']);
-//   sockets.set('polling duration', 10);
-// });
+polling for heroku
+sockets.configure(function() {
+  sockets.set('transports', ['xhr-polling']);
+  sockets.set('polling duration', 10);
+});
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -42,59 +53,61 @@ http.listen(3000, function(){
   console.log('listening on localhost:3000');
 }); 
 
+if (process.env.HEROKU) {
+//io.configure(function() {
+ function runner() {
+ io.set('transports', ['xhr-polling']);
+ io.set('polling duration', 10);
+};  // end function
+} // end if()
+
 // route for gallery data request and response
-var searchOffset = 0;
-app.get('/api', function(req, res){
-  //db.list ('colorData', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
-  db.newSearchBuilder()
-  .collection('colorData')
-  .limit(6)
-  .offset(searchOffset)
-  //.sort('key','asc')
-  .query('*')
-  .then(function(result){
+// var searchOffset = 0;
+// app.get('/api', function(req, res){
+//   //db.list ('colorData', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+//   db.newSearchBuilder()
+//   .collection('colorData')
+//   .limit(6)
+//   .offset(searchOffset)
+//   //.sort('key','asc')
+//   .query('*')
+//   .then(function(result){
 
-    //console.log(result.body)
-    var resultValues = _.pluck(result.body.results, 'value');
-    for(var i = 0; i < resultValues.length; i++){
-      console.log(resultValues[i].time)
-      delete resultValues[i].time
-    }
+//     //console.log(result.body)
+//     var resultValues = _.pluck(result.body.results, 'value');
+//     for(var i = 0; i < resultValues.length; i++){
+//       console.log(resultValues[i].time)
+//       delete resultValues[i].time
+//     }
 
-    searchOffset+= 6;
+//     searchOffset+= 6;
 
-    console.log(JSON.stringify(resultValues));
+//     console.log(JSON.stringify(resultValues));
     
-    res.end(JSON.stringify(resultValues));
-  })
-  .fail(function(err){
-    console.log("get.fail: " + JSON.stringify(err))
-  })
-})
+//     res.end(JSON.stringify(resultValues));
+//   })
+//   .fail(function(err){
+//     console.log("get.fail: " + JSON.stringify(err))
+//   })
+// })
 
 // route for posting gallery data 
-app.post('/api', function(req,res){
-  //console.log(req.body['colorFuncVals[]'])
-  var time = req.body.time;
-  //values to be stored
-  var colorFn = { "time": time,
-                  "colorFuncVals": req.body['colorFuncVals[]']
-  }
-  // add to orchestrate 
-  db.put('colorData', time, colorFn, false)
-    .then(function(res){
-      console.log('one datum posted to db. datum id:  '+ time);
-      lastTimeStamp = time.toString();
-  })
-  .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
-  res.end('good');
-})
-
-
-// //turn on the server
-// http.listen(3000, function(){
-//   console.log('listening on localhost:3000');
-// });
+// app.post('/api', function(req,res){
+//   //console.log(req.body['colorFuncVals[]'])
+//   var time = req.body.time;
+//   //values to be stored
+//   var colorFn = { "time": time,
+//                   "colorFuncVals": req.body['colorFuncVals[]']
+//   }
+//   // add to orchestrate 
+//   db.put('colorData', time, colorFn, false)
+//     .then(function(res){
+//       console.log('one datum posted to db. datum id:  '+ time);
+//       lastTimeStamp = time.toString();
+//   })
+//   .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
+//   res.end('good');
+// })
 
 //words for twitter api to track
 var wordList = ["happy", "sad", "good", "bad"]
