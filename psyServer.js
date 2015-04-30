@@ -11,7 +11,7 @@ var config = (process.env.HEROKU)?
  dbKey: process.env['dbKey'],
  API_key: process.env['API_key'],
 } :
-require('./config.js');
+('./config.js');
 
 var express = require('express');
 var app = express();
