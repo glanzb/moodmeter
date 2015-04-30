@@ -5,18 +5,19 @@ Modal Gallery
 //click on thumbnail image
  $(document).ready(function(){
 $('#gallery li').on('click',function(){
-    var src = $('#gallery img').attr('src');
-    var img = '<img src="./' + src + '" class="img-responsive"/>';
+    //var src = $('#gallery img').attr('src');
+    var index = $(this).index();
+    var img = '<img src="./img/' + (parseInt(index) + 2) + 'pattern.svg" class="img-responsive"/>';
     // get the img source from the thumbnail image src
     
-    var index = $(this).parent('ul').index();
-
+    
+console.log($(this).index());
     //put the html content together: styled img and controls
     var html = '';
     html += img;                
     html += '<div style="height:25px;clear:both;display:block;">';
-    html += '<a class="controls next" href="'+ (index+2) + '">next &raquo;</a>';
-    html += '<a class="controls previous" href="' + (index) + '">&laquo; prev</a>';
+    // html += '<a class="controls next" href="./img/'+ (parseInt(index) + 2) + 'pattern.svg">next &raquo;</a>';
+    // html += '<a class="controls previous" href="./img/' + parseInt(index) + 'pattern.svg">&laquo; prev</a>';
     html += '</div>';
 
     $('#slides').modal();

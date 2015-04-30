@@ -10,8 +10,9 @@ $(function(){
 	
 window.setInterval(function(){
 	$.get("http://localhost:3000/api", function(data){
-		//galleryCollection.add(data);
-		console.log("help");
+		galleryCollection.reset();
+		galleryCollection.add(data);
+		console.log(gallery);
 		console.log(data);
 	})
 
@@ -152,7 +153,11 @@ var CanvasView = Backbone.View.extend({
 });
 
 
-var GalleryModel = Backbone.Model.extend({});
+var GalleryModel = Backbone.Model.extend({
+	initialize: function(){
+		this.view = new GalleryView({model:this});
+	}
+});
 
 var GalleryCollection = Backbone.Collection.extend({
   model: GalleryModel
@@ -160,29 +165,19 @@ var GalleryCollection = Backbone.Collection.extend({
 
 var galleryCollection = new GalleryCollection();
 
-galleryCollection.add([
-	{"filename": "2pattern"},
-	{"filename": "3pattern"},
-	{"filename": "4pattern"},
-	{"filename": "5pattern"},
-	{"filename": "6pattern"},
-	{"filename": "7pattern"}
-]);
 
 
 var GalleryView = Backbone.View.extend({
   tagName: 'div',
   collection : galleryCollection,
-  //template: templates.gallery,
   initialize: function (opts) {
   	var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
 	      var data = {};
 	      data.filename = item.get('filename');
-
-
+	      data.title = item.get('title');
 	      outputHtml += templates.galleryItems(data);
-	      // console.log(outputHtml);
+	      console.log(data.title);
   		})
       outputHtml += templates.galleryFoot();
       this.$el.html(outputHtml)
@@ -193,17 +188,40 @@ var GalleryView = Backbone.View.extend({
   	}
 });
 
+$(document).ready(function(){
+	galleryCollection.add([
+	{"filename": "2pattern", "title": "sad"},
+	{"filename": "3pattern", "title": "happy"},
+	{"filename": "4pattern", "title": "sad"},
+	{"filename": "5pattern", "title": "sad"},
+	{"filename": "6pattern", "title": "sad"},
+	{"filename": "7pattern", "title": "sad"}
+]);
+});
+
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
-	template: template.about,
 		
 	initialize: function(opts){
-		this.n = opts.n;
-		this.$el.html(template.about);
+		var aboutUs = templates.aboutHead();
+		
+		var allOfUs = [
+			{"name": "Brigitta Glanz", "usPic": "brigitta", "website": "http://glanzb.com", "github": "https://github.com/glanzb", "linkedin": "https://www.linkedin.com/in/glanzb"},
+			{"name": "Peter Rockwood", "usPic": "peter", "website": "http://glanzb.com", "github": "https://github.com/prockwood", "linkedin": "https://www.linkedin.com/pub/peter-rockwood/9b/23/414"},
+			{"name": "John Theisen", "usPic": "john", "website": "http://glanzb.com", "github": "https://github.com/aqvp", "linkedin": "https://www.linkedin.com/in/glanzb"}
+		];
+
+		allOfUs.forEach(function (item) {
+	      aboutUs += templates.about(item);
+	      
+  		})
+      	aboutUs += templates.aboutFoot();
+     	this.$el.html(aboutUs)
 	},
 	render: function(){
-	},
+	}
 });
+
 
 var MainView = Backbone.View.extend({
 	el: '#main',
@@ -214,26 +232,19 @@ var MainView = Backbone.View.extend({
 
 
 		var makeSubView = function(id,type){
-		
 			var opts = {
 				collection: self.collection,
 				id: id
 			}
-		
 			var newView = new type(opts); // blockview type
 			self.blocks.push(newView);
 			newView.$el.appendTo(self.$el)
 		};
-
-
-		// makeSubView('nav',NavView);
 		
 		makeSubView('picture',CanvasView);
 		makeSubView('data',DataView);
 		makeSubView('gallery',GalleryView);
 		makeSubView('about', AboutView);
-		
-		//this.$el.appendTo('body');	
 	},
 	render: function() {
 		console.log('something happening');
