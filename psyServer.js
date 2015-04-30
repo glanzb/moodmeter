@@ -26,11 +26,11 @@ var _ = require('underscore')
 
 var lastTimeStamp;
 
-polling for heroku
-sockets.configure(function() {
-  sockets.set('transports', ['xhr-polling']);
-  sockets.set('polling duration', 10);
-});
+//polling for heroku
+// sockets.sockets.configure(function() {
+//   io.set('transports', ['xhr-polling']);
+//   io.set('polling duration', 10);
+// });
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
