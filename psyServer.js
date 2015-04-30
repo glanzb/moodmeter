@@ -52,9 +52,7 @@ app.get('/test', function(req,res){
 });
 
 //turn on the server
-http.listen(3000, function(){
-  console.log('listening on localhost:3000');
-}); 
+
 
 if (process.env.HEROKU) {
 //io.configure(function() {
@@ -211,7 +209,10 @@ io.sockets.on('connection', function(socket){
 
   }, 2000);
 
-
+var port = process.env.PORT || 3000
+http.listen(port, function(){
+  console.log('listening on localhost: ' + port);
+}); 
 
 //dbCollectionName = 'thing';
 
