@@ -4,12 +4,12 @@
 
 var config = (process.env.HEROKU)?
 {
- twtConsumer_key: process.env.twtConsumer_key,
- twtConsumer_secret: process.env.twtConsumer_secret,
- twtToken: process.env.twtToken,
- twtToken_secret: process.env.twtToken_secret,
- dbKey: process.env.dbKey,
- API_key: process.env.API_key,
+ twtConsumer_key: process.env['twtConsumer_key'],
+ twtConsumer_secret: process.env['twtConsumer_secret'],
+ twtToken: process.env['twtToken'],
+ twtToken_secret: process.env['twtToken_secret'],
+ dbKey: process.env['dbKey'],
+ API_key: process.env['API_key'],
 } :
 require('./config.js');
 
