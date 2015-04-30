@@ -1,1 +1,1 @@
-web: psyServer.js
+web: node psyServer.js
