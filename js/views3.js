@@ -93,10 +93,10 @@ var CanvasView = Backbone.View.extend({
 				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
 					if(data === 'done'){
 						alert('post')
-					};
-				});
+					};  // end if()
+				});  // end $.post
 
-			})
+			})  //  end socket.on('timedata', ...
 
 
 
@@ -104,7 +104,7 @@ var CanvasView = Backbone.View.extend({
 				//console.log(t)
 				var interp = a + ((t * .15) * (b - a));
 				return interp
-			};
+			};  // end lerp
 
 			function interval(func, wait, times){
 			    var interv = function(w, t){
@@ -123,16 +123,16 @@ var CanvasView = Backbone.View.extend({
 			    }(wait, times);
 
 			    setTimeout(interv, wait);
-			};
+			}; //end interval
 
 		});
-	},
+	},  // end triangles
 
 
 	// events: {'click': 'click'},
 	initialize: function(opts){
 		//this.$el.addClass('#picture .setup');
-		this.triangles();
+		
 		this.render();
 		this.$el.appendTo('#picture');
 
@@ -141,8 +141,10 @@ var CanvasView = Backbone.View.extend({
 		
 		//trianglify.pattern.canvas(this.el);
 	},
+
+
 	render: function(){		
-			
+		this.triangles();	
 		return this;
 	},	
 
@@ -150,82 +152,115 @@ var CanvasView = Backbone.View.extend({
 			// click: function(evt) {
 			// 	this.collection.refresh(this.n);
 			// }
-});
+});  //end canvasView
 
 
 var GalleryModel = Backbone.Model.extend({
 
+color_function: function(x, y) {
+			console.log("GalleryModel color_function");
+			//console.log(y)
+			//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
+			colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+			return colorFuncString;
+		}, //end color_function
+
+	defaults: {
+		height: 600,
+		width: 800,
+		variance: .5 + ((Math.random()-0.5)/10),
+		cell_size: 100,  //Math.ceil(Math.random()*100),
+		seed: 'gn26p',
+		
+	},  // end defaults
+
 	initialize: function(){
 		this.view = new GalleryView({model:this});
-	}
-});
+	},	// end initialize
+});  //end GalleryModel
 
 
 var GalleryCollection = Backbone.Collection.extend({
-  model: GalleryModel
-});
+  	model: GalleryModel,
+
+  	// initialize: function(){
+  	// 	this.on("add", function(){
+  	// 		console.log("GalleryCollection extend, initialize");
+  			//console.log(this.model);
+  			//galleryView.render();
+  		//}) //end this.on("add",...)
+  		
+  	//}  //end initialize
+});  //end GalleryCollection
+		
 
 var galleryCollection = new GalleryCollection();
 
 
+
+
 var GalleryView = Backbone.View.extend({
-  tagName: 'div',
+	
+  tagName: 'section',
   collection : galleryCollection,
+  template: template.gallery,
+
   initialize: function (opts) {
-  	var outputHtml = templates.galleryHead();
+  	this.n = opts.n;
+		this.$el.html(template.gallery);
+  	console.log("GalleryView initialize");
+  	//this.$el.html = "look here";
+  	
+  //	var outputHtml = templates.galleryHead();
       this.collection.models.forEach(function (item) {
-	      var data = {};
+	      var pattern = Trianglify(this.model);
 	      data.filename = item.get('filename');
-	      data.title = item.get('title');
-	      outputHtml += templates.galleryItems(data);
-	      console.log(data.title);
-  		})
-      outputHtml += templates.galleryFoot();
-      this.$el.html(outputHtml)
+	      //outputHtml += templates.galleryItems(data.filename);
+	      //console.log(outputHtml);
+  		})   //end this.collection.models.forEach
+    //  outputHtml += templates.galleryFoot();
+    //  this.$el.html(outputHtml)
     //this.$el.html(templates.gallery());
-  },
+    this.$el.appendTo('#about');
+  },  //end initialize
+
   render: function () {
-	  
+	  // var outputHtml = templates.galleryHead();
+   //    this.collection.models.forEach(function (item) {
+	  //     var pattern = Trianglify(this.model);
+	  //     //data.filename = item.get('filename');
+	  //     outputHtml += templates.galleryItems(pattern.canvas());
+	  //     console.log(outputHtml);
+  	// 	})
+   //    outputHtml += templates.galleryFoot();
+   //    this.$el.html(outputHtml)
+   return this;
   	}
-});
+});  //end GalleryView()
+
 
 $(document).ready(function(){
-
 	galleryCollection.add([
-	{"filename": "2pattern", "title": "Sad but good"},
-	{"filename": "3pattern", "title": "Happy and good"},
-	{"filename": "8pattern", "title": "Happy but bad"},
-	//{"filename": "4pattern", "title": "sad"},
-	//{"filename": "5pattern", "title": "sad"},
-	// {"filename": "6pattern", "title": "sad"},
-	{"filename": "7pattern", "title": "Sad and bad"}
-
+	{"filename": "1pattern"},
+	{"filename": "2pattern"},
+	{"filename": "3pattern"},
 ]);
 });
 
+
+
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
+	template: template.about,
 		
 	initialize: function(opts){
-		var aboutUs = templates.aboutHead();
-		
-		var allOfUs = [
-			{"name": "Brigitta Glanz", "usPic": "brigitta", "email": "glanzb@gmail.com", "website": "http://glanzb.com", "github": "https://github.com/glanzb", "linkedin": "https://www.linkedin.com/in/glanzb"},
-			{"name": "Peter Rockwood", "usPic": "peter", "email": "peter.rockwood@gmail.com", "github": "https://github.com/prockwood", "linkedin": "https://www.linkedin.com/pub/peter-rockwood/9b/23/414"},
-			{"name": "John Theisen", "usPic": "john", "email": "theisen83@yahoo.com", "github": "https://github.com/aqvp", "linkedin": "https://www.linkedin.com/in/glanzb"}
-		];
-
-		allOfUs.forEach(function (item) {
-	      aboutUs += templates.about(item);
-	      
-  		})
-      	aboutUs += templates.aboutFoot();
-     	this.$el.html(aboutUs)
+		this.n = opts.n;
+		this.$el.html(template.about);
+		this.$el.appendTo('#gallery');
 	},
 	render: function(){
-	}
+	},
 });
-
 
 var MainView = Backbone.View.extend({
 	el: '#main',
@@ -236,19 +271,26 @@ var MainView = Backbone.View.extend({
 
 
 		var makeSubView = function(id,type){
+		
 			var opts = {
 				collection: self.collection,
 				id: id
 			}
+		
 			var newView = new type(opts); // blockview type
 			self.blocks.push(newView);
 			newView.$el.appendTo(self.$el)
 		};
+
+
+		// makeSubView('nav',NavView);
 		
 		makeSubView('picture',CanvasView);
 		makeSubView('data',DataView);
-		makeSubView('gallery',GalleryView);
+		//makeSubView('gallery',GalleryView);
 		makeSubView('about', AboutView);
+		
+		//this.$el.appendTo('body');	
 	},
 	render: function() {
 		console.log('something happening');
@@ -267,5 +309,7 @@ function makePage() {
 	page = new MainView({collection:galleryCollection});
 	page.render();
 }
+
+
 
 $(makePage);
