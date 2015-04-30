@@ -154,17 +154,18 @@ var CanvasView = Backbone.View.extend({
 
 
 var GalleryModel = Backbone.Model.extend({
+
 	initialize: function(){
 		this.view = new GalleryView({model:this});
 	}
 });
+
 
 var GalleryCollection = Backbone.Collection.extend({
   model: GalleryModel
 });
 
 var galleryCollection = new GalleryCollection();
-
 
 
 var GalleryView = Backbone.View.extend({
@@ -189,6 +190,7 @@ var GalleryView = Backbone.View.extend({
 });
 
 $(document).ready(function(){
+
 	galleryCollection.add([
 	{"filename": "2pattern", "title": "Sad but good"},
 	{"filename": "3pattern", "title": "Happy and good"},
@@ -197,6 +199,7 @@ $(document).ready(function(){
 	//{"filename": "5pattern", "title": "sad"},
 	// {"filename": "6pattern", "title": "sad"},
 	{"filename": "7pattern", "title": "Sad and bad"}
+
 ]);
 });
 
