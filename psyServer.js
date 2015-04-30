@@ -5,7 +5,7 @@ var config = require('./config.js');
 var express = require('express');
 var app = express();
 var bodyParser = require("body-parser"); 
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 
 var io = require('socket.io')(http);
 var Twitter = require('node-tweet-stream');
@@ -37,6 +37,11 @@ app.get('/test', function(req,res){
   res.sendFile(__dirname + '/testFiles/testIndex.html');
 });
 
+//turn on the server
+http.listen(3000, function(){
+  console.log('listening on localhost:3000');
+}); 
+
 // route for gallery data request and response
 var searchOffset = 0;
 app.get('/api', function(req, res){
@@ -45,7 +50,7 @@ app.get('/api', function(req, res){
   .collection('colorData')
   .limit(6)
   .offset(searchOffset)
-  .sort('key','asc')
+  //.sort('key','asc')
   .query('*')
   .then(function(result){
 
@@ -56,7 +61,7 @@ app.get('/api', function(req, res){
       delete resultValues[i].time
     }
 
-    searchOffset+= 10;
+    searchOffset+= 6;
 
     console.log(JSON.stringify(resultValues));
     
@@ -86,10 +91,10 @@ app.post('/api', function(req,res){
 })
 
 
-//turn on the server
-http.listen(3000, function(){
-  console.log('listening on localhost:3000');
-});
+// //turn on the server
+// http.listen(3000, function(){
+//   console.log('listening on localhost:3000');
+// });
 
 //words for twitter api to track
 var wordList = ["happy", "sad", "good", "bad"]
@@ -121,34 +126,40 @@ var tw = new Twitter({
 
 //add the tracked words
 tw.track(wordList);
-
-//on new tweet
-tw.on('tweet', function(tweet){
-  //scrub tweet text
-  var text = tweet.text.toLowerCase();
-  text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-
-  //check which tracked word the tweet matches
-  //update the data object
-  //emit data object 
-  wordList.forEach(function(w){
-    if (text.indexOf(w) !== -1) {
-      wordData.words[w]++;
-      wordData.wordChanged = w;
-      wordData.total++;
-      wordData.time = Date.now();
-      wordData.tweet = tweet.text;
-      wordData.biggest = biggest();
-      if (wordData.total%100 === 0){
-        io.emit('data', wordData);
-      }
-      
-    }
+var openDataEmitter = false; 
+io.sockets.on('connection', function(socket){
+  openDataEmitter = true;
   })
+//on new tweet
+  tw.on('tweet', function(tweet){
+    //scrub tweet text
+    var text = tweet.text.toLowerCase();
+    text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
 
-  //console.log(wordData);
+    //check which tracked word the tweet matches
+    //update the data object
+    //emit data object 
+    wordList.forEach(function(w){
+      if (text.indexOf(w) !== -1) {
+        wordData.words[w]++;
+        wordData.wordChanged = w;
+        wordData.total++;
+        wordData.time = Date.now();
+        wordData.tweet = tweet.text;
+        wordData.biggest = biggest();
+        if(openDataEmitter){
+          if (wordData.total%100 === 0){
+            io.emit('data', wordData);
+          }
+        }
+        
+      }
+    })
 
-});
+    //console.log(wordData);
+
+  });
+
 
 function biggest(){
   var countArr = [];
@@ -162,21 +173,27 @@ function biggest(){
 var oldWordData = deep_.deepClone(wordData);
 //console.log(oldWordData);
 
- 
+var openTimedDataEmitter = false; 
 //calculate and store frequency of tweets for each word
-setInterval(function(){
-  var interval = wordData.time - oldWordData.time;
-  for (prop in wordData.words){
-    wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
-  }
+io.sockets.on('connection', function(socket){
+  openTimedDataEmitter = true
+})
+  setInterval(function(){
+    var interval = wordData.time - oldWordData.time;
+    for (prop in wordData.words){
+      wordData.wordsFreq[prop] = Math.round(((wordData.words[prop] - oldWordData.words[prop])/interval)*1000);
+    }
 
-  wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
-  wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
-  oldWordData = deep_.deepClone(wordData);
-  console.log(wordData.wordsFreqProportions);
-  io.emit('timedData', wordData )
+    wordData.wordsFreqProportions['happy_sad'] = wordData.wordsFreq['happy'] / (wordData.wordsFreq['happy'] + wordData.wordsFreq['sad']);
+    wordData.wordsFreqProportions['good_bad'] = wordData.wordsFreq['good'] / (wordData.wordsFreq['good'] + wordData.wordsFreq['bad']);
+    oldWordData = deep_.deepClone(wordData);
+    console.log(wordData.wordsFreqProportions);
+    
+    if(openTimedDataEmitter){
+      io.emit('timedData', wordData )
+    }
 
-}, 2000);
+  }, 2000);
 
 
 
