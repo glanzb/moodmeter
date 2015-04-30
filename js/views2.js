@@ -10,12 +10,42 @@ $(function(){
 	
 window.setInterval(function(){
 	$.get("http://localhost:3000/api", function(data){
-		//galleryCollection.add(data);
-		console.log("help");
-		console.log(data);
-	})
+		parsedData = JSON.parse(data);
 
-}, 4000)	
+		var modelUpdateArr = parsedData.map(function(hsl){
+			var colorFuncObj = {};
+			//console.log(hsl.colorFuncVals[0])
+			//colorFuncString = 'hsl(' + hsl.colorFuncVals[0] + ',' + hsl.colorFuncVals[1] + '%,'+ hsl.colorFuncVals[2] + '%)' ;
+			// var colorFuncString = 'hsl(Math.floor((x*50)+(' + hsl.colorFuncVals[0] + '*200)), Math.floor((y)*(' + hsl.colorFuncVals[1] + '*500)) %, (40+(y*60))%)'
+			colorFuncObj.color_function = function(x,y){
+				//var colorFuncString = 
+				var colorFuncString = 'hsl(' + Math.floor((x*50)+(hsl.colorFuncVals[0]*200)) + ',' + Math.floor((y)*(hsl.colorFuncVals[1]*500)) + '%,'+ (40+(y*60)) + '%)'
+				return colorFuncString
+			}
+			// console.log(colorFuncObj.color_function);
+			return colorFuncObj
+		})
+
+		console.log("converted hsl: ");
+		//console.log(modelUpdateArr);
+		window.testModelUpdateArr = modelUpdateArr;
+
+		// _.invoke(galleryCollection.toArray(), 'destroy');
+		galleryCollection.reset(modelUpdateArr)
+		//galleryCollection.add(modelUpdateArr);
+		//galleryCollection.add(data);
+		//console.log("data retreival: ");
+		//console.log(typeof data);
+
+		galleryView.specialRender();
+
+
+	})
+	.fail(function() {
+    console.log( "$.get error" );
+  	})
+
+}, 10000)	
 
 
 var DataView = Backbone.View.extend({
@@ -51,36 +81,42 @@ var CanvasView = Backbone.View.extend({
 			var hFreq = [1, 1];
 			var gFreq = [1, 1];
 			var colorFuncString;
+			var hue;
+			var saturation;
+			var lightness;
+			// var x;
+			// var y;
 
 			socket.on('timedData', function(wordData){
-				//console.log(hFreq);
 				hFreq.pop();
 				hFreq.unshift(wordData.wordsFreqProportions['happy_sad']);
 				gFreq.pop();
 				gFreq.unshift(wordData.wordsFreqProportions['good_bad']);
-
 				var i = 0;
 
 				interval(function(){
 					var xShift = lerp(hFreq[1], hFreq[0], i);
 					var yShift = lerp(gFreq[1], gFreq[0], i);
 					i++;
-					pattern = Trianglify({
+					var pattern = Trianglify({
 						height: 600,
 						width: 800,
 						variance: .5 + ((Math.random()-0.5)/10),
 						cell_size: 100,  //Math.ceil(Math.random()*100),
 						seed: 'gn26p',
 						color_function: function(x, y) {
-							//console.log(y)
-							//return 'hsl(' + Math.floor((x*50)+(xShift*10)) + ','+ Math.floor(x/20) +'%,60%)'
-							colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+							hue = Math.floor((x*50)+(xShift*200));
+							saturation = Math.floor((y)*(yShift*500));
+							lightness = (40+(y*60));
+							//console.log(hue, saturation, lightness);
+							// colorFuncString = 'hsl(' + Math.floor((x*50)+(xShift*200)) + ',' + Math.floor((y)*(yShift*500)) + '%,'+ (40+(y*60)) + '%)'
+							colorFuncString = 'hsl(' + hue + ',' + saturation + '%,'+ lightness + '%)'
 							return colorFuncString
 						}
 						
 					});
 					//console.log(xShift);
-					$("canvas").remove();
+					$("#picture").empty();
 					$("#picture").append(pattern.canvas());
 					
 				}, 50, 20);
@@ -88,15 +124,20 @@ var CanvasView = Backbone.View.extend({
 				//////////////////////////////////
 				//poster
 				//////////////////////////////////
+				//console.log(hue, saturation, lightness);
+				
 
-				$.post("http://localhost:3000/api", {time: Date.now(), colorFn: colorFuncString}, function(data){
+			})
+			window.setInterval(function(){
+				$.post("http://localhost:3000/api", {time: Date.now(), colorFuncVals: [hFreq[0], gFreq[0], lightness]}, function(data){
 					if(data === 'done'){
 						alert('post')
 					};
-				});
-
-			})
-
+				})
+				.fail(function() {
+    				console.log( "post error" );
+  				})
+			}, 10000);
 
 
 			function lerp(a,b,t){
@@ -152,7 +193,22 @@ var CanvasView = Backbone.View.extend({
 });
 
 
-var GalleryModel = Backbone.Model.extend({});
+var GalleryModel = Backbone.Model.extend({
+	defaults: {
+		height: 600,
+		width: 800,
+		variance: .5 + ((Math.random()-0.5)/10),
+		cell_size: 100,  //Math.ceil(Math.random()*100),
+		seed: 'gn26p',
+		color_function: function(x,y){
+			hue = 200;
+			saturation = 60;
+			lightness = 70;
+			colorFuncString = 'hsl(' + hue + ',' + saturation + '%,'+ lightness + '%)'
+			return colorFuncString
+		}
+	}
+});
 
 var GalleryCollection = Backbone.Collection.extend({
   model: GalleryModel
@@ -160,10 +216,10 @@ var GalleryCollection = Backbone.Collection.extend({
 
 var galleryCollection = new GalleryCollection();
 
-galleryCollection.add([
-	{"filename": "1pattern"},
-	{"filename": "2pattern"}
-]);
+// galleryCollection.add([
+// 	{"filename": "1pattern"},
+// 	{"filename": "2pattern"}
+// ]);
 
 
 var GalleryView = Backbone.View.extend({
@@ -176,16 +232,26 @@ var GalleryView = Backbone.View.extend({
 	      var data = {};
 	      data.filename = item.get('filename');
 	      outputHtml += templates.galleryItems(data);
-	      console.log(outputHtml);
+	      //console.log(outputHtml);
   		})
       outputHtml += templates.galleryFoot();
       this.$el.html(outputHtml)
     //this.$el.html(templates.gallery());
   },
   render: function () {
+  	console.log("this is normal galleryView render()")
+	},
+
+	specialRender: function() {
+	$('#gallery').empty();
+  	this.collection.models.forEach(function (item) {
+  		console.log(item.attributes.color_function)
+	    var triPattern = Trianglify(item.attributes);
+	    $('#gallery').append(triPattern.canvas());
 	  
-  	}
-});
+		});
+	}
+})
 
 var AboutView = Backbone.View.extend({
 	tagName: 'section',
@@ -230,7 +296,7 @@ var MainView = Backbone.View.extend({
 		//this.$el.appendTo('body');	
 	},
 	render: function() {
-		console.log('something happening');
+		//console.log('something happening');
 		galleryView = new GalleryView({collection: this.collection});
     	galleryView.render();
 		return this;

@@ -40,9 +40,9 @@ app.get('/test', function(req,res){
 // route for gallery data request and response
 var searchOffset = 0;
 app.get('/api', function(req, res){
-  //db.list ('newThing', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
+  //db.list ('colorData', {limit:6, endKey: lastTimeStamp}) //{limit:5, endKey: lastTimeStamp}
   db.newSearchBuilder()
-  .collection('newThing')
+  .collection('colorData')
   .limit(6)
   .offset(searchOffset)
   .sort('key','asc')
@@ -52,11 +52,14 @@ app.get('/api', function(req, res){
     //console.log(result.body)
     var resultValues = _.pluck(result.body.results, 'value');
     for(var i = 0; i < resultValues.length; i++){
+      console.log(resultValues[i].time)
       delete resultValues[i].time
     }
 
+    searchOffset+= 10;
+
     console.log(JSON.stringify(resultValues));
-    searchOffset++;
+    
     res.end(JSON.stringify(resultValues));
   })
   .fail(function(err){
@@ -73,13 +76,13 @@ app.post('/api', function(req,res){
                   "colorFuncVals": req.body['colorFuncVals[]']
   }
   // add to orchestrate 
-  db.put('newThing', time, colorFn, false)
+  db.put('colorData', time, colorFn, false)
     .then(function(res){
       console.log('one datum posted to db. datum id:  '+ time);
       lastTimeStamp = time.toString();
   })
   .fail(function(error){console.log('db post failed: '+ JSON.stringify(error.body))});
-  res.end('good')
+  res.end('good');
 })
 
 
