@@ -39,14 +39,16 @@ h6 {
 }
 
 #main {
-    margin-top: 150px;
+    margin-top: 200px;
 }
+
 
 canvas {
         margin-right: 10%;
         margin-left: 10%;
         width: 80%;
 }
+
 
 .modal-dialog {
     z-index: 777777777777777;
@@ -149,6 +151,12 @@ section h2 {
     overflow: hidden;
     position: relative;
     margin-top: -100;
+    font-size: 1.75em;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  
+    text-shadow: 1px 2px 1px rgba(243, 243, 243, .5);
+    text-align: center;
+    background-color: rgba(255, 0, 0, 0.1);
 }
 
 

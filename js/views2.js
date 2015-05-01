@@ -67,7 +67,7 @@ var CanvasView = Backbone.View.extend({
 					var yShift = lerp(gFreq[1], gFreq[0], i);
 					i++;
 					pattern = Trianglify({
-						height: 600,
+						height: 500,
 						width: 800,
 						variance: .5 + ((Math.random()-0.5)/10),
 						cell_size: 100,  //Math.ceil(Math.random()*100),
@@ -194,11 +194,11 @@ $(document).ready(function(){
 	galleryCollection.add([
 	{"filename": "2pattern", "title": "Sad but good"},
 	{"filename": "3pattern", "title": "Happy and good"},
-	{"filename": "8pattern", "title": "Happy but bad"},
+	{"filename": "4pattern", "title": "Happy but bad"},
 	//{"filename": "4pattern", "title": "sad"},
 	//{"filename": "5pattern", "title": "sad"},
 	// {"filename": "6pattern", "title": "sad"},
-	{"filename": "7pattern", "title": "Sad and bad"}
+	{"filename": "5pattern", "title": "Sad and bad"}
 
 ]);
 });

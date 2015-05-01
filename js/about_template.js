@@ -8,7 +8,7 @@ templates.aboutHead =  _.template(
                     '<hr class="down">'+
                 '</div>'+
            
-                '<p>Emotions spread person to person and crowds can unite in their moods. Face to face understanding moods is instinctive but online, emotions can be easy to misinterpret and labor intensive to glean from a population.  A simple visual representation of twitter mood hashtags could serve as an expression for twitters mood in a quick and intuitive means and to supply users with a way to compare their own.</p>'+
+                '<p>Psycolor visualizes an incoming tweet-stream by evaluating the proportion of tweets containing a set of predefined mood-related keywords.   A “Happy- Sad” axis maps to a yellow-blue gradient and a “Good-Bad” axis maps to color saturation.</p>'+
                 '</div>'+
               
               '<div class="row">');
