@@ -8,7 +8,7 @@ templates.aboutHead =  _.template(
                     '<hr class="down">'+
                 '</div>'+
            
-                '<p>Psycolor visualizes an incoming tweet-stream by evaluating the proportion of tweets containing a set of predefined mood-related keywords.   A “Happy- Sad” axis maps to a yellow-blue gradient and a “Good-Bad” axis maps to color saturation.</p>'+
+                '<p>Psycolor visualizes an incoming tweet-stream by evaluating the proportion of tweets containing a set of predefined mood-related keywords.   A “Happy-Sad” axis maps to a yellow-blue gradient and a “Good-Bad” axis maps to color saturation.</p>'+
                 '</div>'+
               
               '<div class="row">');
